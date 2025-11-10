@@ -1,64 +1,84 @@
+# restack-gen 0.1.0
+# Date: 2025-11-10
+# Timestamp: 2025-11-10T10:38:06.925606
 from pathlib import Path
 from .base import Command
-from ..constants import VERSION, Language, GenerationType
+from ..constants import VERSION, Language
 from ..utils.console import Color, print_error, print_warning
 
+
 class VersionCommand(Command):
-	"""Show version information."""
-	def execute(self, args: list[str]) -> int:
-		print(f"restack-gen version {VERSION}")
-		return 0
+    """Show version information."""
+
+    def execute(self, args: list[str]) -> int:
+        print(f"restack-gen version {VERSION}")
+        return 0
+
 
 class ListTemplatesCommand(Command):
-	"""List available templates."""
-	def execute(self, args: list[str]) -> int:
-		templates_root = Path(__file__).parent.parent.parent / "templates"
-		if not templates_root.exists():
-			print_warning("Templates directory not found")
-			return 1
-		if self.config.lang:
-			return self._show_language_templates(templates_root, self.config.lang)
-		else:
-			return self._show_all_templates(templates_root)
-	def _show_language_templates(self, templates_root: Path, lang: Language) -> int:
-		"""Show templates for specific language."""
-		lang_dir = templates_root / lang.value
-		if not lang_dir.exists():
-			print_error(f"No templates for language: {lang.value}")
-			return 1
-		templates = self._get_templates(lang_dir)
-		print(f"{Color.BOLD}Templates ({lang.value}):{Color.RESET}")
-		for t in sorted(templates):
-			print(f"  • {t}")
-		return 0
-	def _show_all_templates(self, templates_root: Path) -> int:
-		"""Show all templates organized by language."""
-		print(f"{Color.BOLD}Available Templates:{Color.RESET}\n")
-		for lang_dir in sorted(templates_root.iterdir()):
-			if not lang_dir.is_dir() or lang_dir.name.startswith('.'):
-				continue
-			templates = self._get_templates(lang_dir)
-			if templates:
-				print(f"{Color.CYAN}{lang_dir.name}:{Color.RESET}")
-				for t in sorted(templates):
-					print(f"  • {t}")
-				print()
-		return 0
-	def _get_templates(self, directory: Path) -> list[str]:
-		"""Get list of template files in directory."""
-		return [
-			p.name for p in directory.iterdir()
-			if p.is_file() and not p.name.startswith('.')
-		]
+    """List available templates."""
+
+    def __init__(self, config, templates_root=None):
+        super().__init__(config)
+        self.templates_root = templates_root
+
+    def execute(self, args: list[str]) -> int:
+        templates_root = (
+            self.templates_root or Path(__file__).parent.parent.parent / "templates"
+        )
+        if not templates_root.exists():
+            print_warning("Templates directory not found")
+            return 1
+        if self.config.lang:
+            return self._show_language_templates(templates_root, self.config.lang)
+        else:
+            return self._show_all_templates(templates_root)
+
+    def _show_language_templates(self, templates_root: Path, lang: Language) -> int:
+        """Show templates for specific language."""
+        lang_dir = templates_root / lang.value
+        if not lang_dir.exists():
+            print_error(f"No templates for language: {lang.value}")
+            return 1
+        templates = self._get_templates(lang_dir)
+        print(f"{Color.BOLD}Templates ({lang.value}):{Color.RESET}")
+        for t in sorted(templates):
+            print(f"  • {t}")
+        return 0
+
+    def _show_all_templates(self, templates_root: Path) -> int:
+        """Show all templates organized by language."""
+        print(f"{Color.BOLD}Available Templates:{Color.RESET}\n")
+        for lang_dir in sorted(templates_root.iterdir()):
+            if not lang_dir.is_dir() or lang_dir.name.startswith("."):
+                continue
+            templates = self._get_templates(lang_dir)
+            if templates:
+                print(f"{Color.CYAN}{lang_dir.name}:{Color.RESET}")
+                for t in sorted(templates):
+                    print(f"  • {t}")
+                print()
+        return 0
+
+    def _get_templates(self, directory: Path) -> list[str]:
+        """Get list of template files in directory."""
+        return [
+            p.name
+            for p in directory.iterdir()
+            if p.is_file() and not p.name.startswith(".")
+        ]
+
 
 class HelpCommand(Command):
-	"""Show help information."""
-	def execute(self, args: list[str]) -> int:
-		print(self._get_help_text())
-		return 0
-	def _get_help_text(self) -> str:
-		"""Generate help text."""
-		return f"""{Color.BOLD}restack-gen{Color.RESET} - Restack code generator v{VERSION}
+    """Show help information."""
+
+    def execute(self, args: list[str]) -> int:
+        print(self._get_help_text())
+        return 0
+
+    def _get_help_text(self) -> str:
+        """Generate help text."""
+        return f"""{Color.BOLD}restack-gen{Color.RESET} - Restack code generator v{VERSION}
 
 {Color.BOLD}USAGE:{Color.RESET}
   restack-gen <command> [options] [arguments]
