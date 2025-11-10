@@ -254,7 +254,7 @@ uv pip install -e .
 
 ## License
 
-Copyright 2025 Derrick Hodge. Licensed under the MIT License.
+Copyright 2025 Derrick Hodge. Licensed under the APACHE 2.0 License.
 
 ## Support
 
