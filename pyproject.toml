@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "restack-gen"
+version = "0.1.0"
+description = "CLI tool to scaffold opinionated Restack agent frameworks in Python and TypeScript."
+authors = [
+    { name = "Derrick Hodge", email = "team@thethinking.company" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.0.0",
+    "jinja2>=3.0.0",
+    "restack-ai>=0.0.115"
+]
+
+[project.scripts]
+restack-gen = "src.cli:main"
+
+[tool.pytest.ini_options]
+addopts = "-ra -q"
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88

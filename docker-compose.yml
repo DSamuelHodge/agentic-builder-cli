@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  restack:
+    image: ghcr.io/restackio/restack:main
+    pull_policy: always
+    container_name: restack
+    ports:
+      - "5233:5233"
+      - "6233:6233"
+      - "7233:7233"
+      - "9233:9233"
+      - "10233:10233"
+      - "11233:11233"
+      - "12233:12233"
+    restart: unless-stopped
