@@ -19,6 +19,8 @@ def create_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("command", nargs="?", help="Command to run")
     parser.add_argument("args", nargs="*", help="Command arguments")
+    # Add concurrent-new subcommand for concurrent project generation
+    parser.add_argument("--concurrent-new", nargs="*", help="Create multiple projects concurrently (provide names)")
     parser.add_argument("--lang", choices=["py", "ts"])
     parser.add_argument("--pm", choices=["uv", "pip", "pnpm", "npm"])
     parser.add_argument("--cwd", type=Path)
@@ -54,10 +56,47 @@ def main() -> int:
     # Disable colors if needed
     if args.no_color or not sys.stdout.isatty():
         Color.disable()
+    # Handle concurrent-new subcommand FIRST
+    if args.concurrent_new:
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        from .commands.new import NewCommand
+        import shutil
+        from .utils.console import print_success
+        config = build_config(args)
+        results = {}
+        def run_new(name):
+            cmd = NewCommand(config)
+            try:
+                code = cmd.execute([name])
+                if code != 0:
+                    # Cleanup on failure
+                    app_dir = cmd._get_app_directory(name)
+                    if app_dir.exists():
+                        shutil.rmtree(app_dir, ignore_errors=True)
+                return (name, code)
+            except Exception as e:
+                app_dir = cmd._get_app_directory(name)
+                if app_dir.exists():
+                    shutil.rmtree(app_dir, ignore_errors=True)
+                return (name, 1)
+        with ThreadPoolExecutor() as executor:
+            future_to_name = {executor.submit(run_new, name): name for name in args.concurrent_new}
+            for future in as_completed(future_to_name):
+                name = future_to_name[future]
+                try:
+                    name, code = future.result()
+                    results[name] = code
+                except Exception:
+                    results[name] = 1
+        failed = [n for n, c in results.items() if c != 0]
+        if failed:
+            print_error(f"Failed to create: {', '.join(failed)}")
+            return 1
+        print_success(f"All projects created successfully: {', '.join(results.keys())}")
+        return 0
     # Show help if needed
     if args.help or not args.command:
         from .commands.info import HelpCommand
-
         HelpCommand(Config()).execute([])
         return 0
     # Build config and get command
