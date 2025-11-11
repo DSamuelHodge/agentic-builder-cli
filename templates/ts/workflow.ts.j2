@@ -2,8 +2,8 @@
  * Replace pseudo scheduler/queue with Restack workflow APIs.
  */
 
-import type { AgentContext, WorkflowRunContext } from "../types";
-import { create{{ pascal_name }} } from "../agents/{{ name }}";
+import type { AgentContext, WorkflowRunContext } from "../types.js";
+import { create{{ pascal_name }} } from "../agents/{{ name }}.js";
 
 export interface {{ pascal_name }}WorkflowInput {
   seedMessage?: string;

@@ -9,6 +9,8 @@ with import_functions():
     # Example: from src.functions.llm_chat import llm_chat
     {% if include_llm_function %}
     from src.functions.llm_chat import llm_chat, LlmChatInput
+    {% else %}
+    pass
     {% endif %}
 
 class {{ pascal_name }}Input(BaseModel):
