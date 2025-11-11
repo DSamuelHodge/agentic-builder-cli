@@ -46,11 +46,16 @@ uv pip install restack-gen
 pip install restack-gen
 ```
 
+
 ## Quick Start
+
 
 ```bash
 # Create a new Restack project
 restack-gen new my-agent-app
+
+# Generate multiple projects concurrently (NEW)
+restack-gen --concurrent-new proj1 proj2 proj3 --lang py
 
 # Navigate to project
 cd my-agent-app
@@ -89,16 +94,30 @@ restack-gen doctor
 
 | Flag | Description | Applies To |
 |------|-------------|------------|
-| `--lang <py\|ts>` | Specify target language (Python/TypeScript) | `new`, `generate` |
+| `--lang <py\|ts>` | Specify target language (Python/TypeScript) | `new`, `generate`, `--concurrent-new` |
 | `--pm <uv\|pip\|pnpm\|npm>` | Set preferred package manager | `new` |
 | `--cwd <path>` | Execute command in specified directory | All commands |
 | `--force` | Overwrite existing files without confirmation | `generate`, `new` |
 | `--dry-run` | Preview actions without making changes | `new`, `generate`, `dev` |
+| `--concurrent-new <names>` | Generate multiple projects concurrently (provide names) | Global (no command needed) |
 | `--quiet` | Suppress informational output | All commands |
 | `--verbose` | Enable detailed logging and output | All commands |
 | `--yes` | Automatically answer yes to all prompts | `generate` |
 | `--no-color` | Disable ANSI color output | All commands |
 | `--help` | Display command-specific help | All commands |
+## Concurrent Project Generation
+
+You can generate multiple projects in parallel using the `--concurrent-new` flag. This is useful for E2E testing, CI/CD, or bootstrapping several projects at once.
+
+**Example:**
+
+```bash
+restack-gen --concurrent-new proj1 proj2 proj3 --lang py
+```
+
+This will create `proj1`, `proj2`, and `proj3` concurrently in the current directory. If any project fails to generate, the CLI will clean up partial outputs and report errors.
+
+**Note:** You do not need to specify a command (like `new`) when using `--concurrent-new`.
 
 ## Configuration
 
