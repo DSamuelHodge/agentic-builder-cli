@@ -1,0 +1,32 @@
+# CI/CD script for concurrent project generation and validation
+# Example: GitHub Actions workflow
+
+name: Concurrent Project Generation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  generate-projects:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          pip install .
+      - name: Concurrently generate projects
+        run: |
+          python -m restack_gen --concurrent-new ci_proj1 ci_proj2 ci_proj3 --lang py
+      - name: Validate generated projects
+        run: |
+          test -d ci_proj1 && test -d ci_proj2 && test -d ci_proj3
+      - name: Clean up
+        run: |
+          rm -rf ci_proj1 ci_proj2 ci_proj3
