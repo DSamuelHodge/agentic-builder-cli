@@ -2,40 +2,17 @@
 # Date: 2025-11-10
 # Timestamp: 2025-11-10T10:38:06.925606
 from pathlib import Path
-from typing import Optional
 
 
 class ProjectStructure:
     """Handles project directory structure and paths."""
 
-    def __init__(self, root: Optional[Path] = None):
-        self.root = self._find_project_root(root or Path.cwd())
-
-    def _find_project_root(self, start_path: Path) -> Path:
-        """Find project root by looking for marker files."""
-        current = start_path.resolve()
-        markers = ["restack.toml", "pyproject.toml", "package.json"]
-        for _ in range(10):  # Limit depth
-            for marker in markers:
-                if (current / marker).exists():
-                    return current
-            parent = current.parent
-            if parent == current:  # Reached filesystem root
-                break
-            current = parent
-        return start_path.resolve()
-
-    @property
-    def src_dir(self) -> Path:
-        return self.root / "src"
-
-    @property
-    def tests_dir(self) -> Path:
-        return self.root / "tests"
-
-    @property
-    def scripts_dir(self) -> Path:
-        return self.root / "scripts"
+    def __init__(self, project_root: Path):
+        # Always use the provided project_root directly (do not climb up)
+        self.root = project_root.resolve()
+        self.src_dir = self.root / "src"
+        self.tests_dir = self.root / "tests"
+        self.scripts_dir = self.root / "scripts"
 
     def get_subdir(self, subdir: str) -> Path:
         """Get subdirectory path under src/."""

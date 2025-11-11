@@ -1,0 +1,16 @@
+from typing import List
+from pydantic import BaseModel
+from restack_ai.function import function, heartbeat, log
+
+class LlmStreamInput(BaseModel):
+    messages: List[dict]
+    stream: bool = True
+
+@function.defn()
+async def llm_stream(function_input: LlmStreamInput):
+    # Emit periodic heartbeats for long streams; yield-like behavior handled by your app layer.
+    # If your provider exposes chunk callbacks, push to your transport (e.g. SSE/WebSocket) there.
+    log.info("stream_begin", tokens=0)
+    heartbeat("initializing")
+    # Return final transcript/metadata; intermediate streaming handled outside.
+    return {"status": "streamed"}

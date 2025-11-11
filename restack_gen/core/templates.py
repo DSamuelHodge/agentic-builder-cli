@@ -18,10 +18,13 @@ class TemplateEngine:
         if self._env is None:
             try:
                 from jinja2 import Environment, FileSystemLoader
+                import datetime
 
                 self._env = Environment(
                     loader=FileSystemLoader(str(self.templates_dir))
                 )
+                # Add 'now' function to the environment
+                self._env.globals["now"] = datetime.datetime.now
             except ImportError:
                 raise ImportError(
                     "Jinja2 is required for template rendering. "

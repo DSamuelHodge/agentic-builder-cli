@@ -1,0 +1,39 @@
+from datetime import timedelta
+from typing import List
+from pydantic import BaseModel
+from restack_ai.agent import agent, condition, import_functions, log
+
+with import_functions():
+    from src.functions.llm_stream import llm_stream, LlmStreamInput  # your streaming fn
+
+class {{ pascal_name }}StreamInput(BaseModel):
+    messages: List[dict] = []
+    stream: bool = True
+
+@agent.defn()
+class {{ pascal_name }}Stream:
+    def __init__(self) -> None:
+        self._end = False
+        self._messages: List[dict] = []
+
+    @agent.event
+    async def messages(self, messages: List[dict]):
+        self._messages.extend(messages)
+        return {"received": len(messages)}
+
+    @agent.event
+    async def end(self):
+        self._end = True
+        return {"ended": True}
+
+    @agent.run
+    async def run(self, agent_input: {{ pascal_name }}StreamInput):
+        log.info("starting stream", count=len(self._messages))
+        # stream token chunks via a function designed to yield pieces (see function template)
+        result = await agent.step(
+            function=llm_stream,
+            function_input=LlmStreamInput(messages=self._messages, stream=agent_input.stream),
+            start_to_close_timeout=timedelta(seconds={{ timeouts_start_to_close_seconds }}),
+        )
+        await condition(lambda: self._end)
+        return {"final": result}

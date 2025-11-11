@@ -1,0 +1,16 @@
+/* Registry listing for `restack-gen routes` */
+import { create{{ pascal_name }} } from "./agents/{{ name }}";
+import { run{{ pascal_name }}Workflow } from "./workflows/{{ name }}";
+import { {{ name }} as {{ name }}Fn } from "./functions/{{ name }}";
+
+export const agents = {
+  "{{ pascal_name }}": create{{ pascal_name }},
+};
+
+export const workflows = {
+  "Run{{ pascal_name }}Workflow": run{{ pascal_name }}Workflow,
+};
+
+export const functions = {
+  "{{ name }}": {{ name }}Fn,
+};

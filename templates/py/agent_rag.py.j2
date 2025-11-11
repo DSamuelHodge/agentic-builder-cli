@@ -1,0 +1,22 @@
+from pydantic import BaseModel
+from typing import List
+from restack_ai.agent import agent, child_execute, import_functions
+
+with import_functions():
+    from src.workflows.{{ name }}_rag_search import {{ pascal_name }}RagSearch  # child workflow
+
+class {{ pascal_name }}RagInput(BaseModel):
+    query: str
+    messages: List[dict] = []
+
+@agent.defn()
+class {{ pascal_name }}Rag:
+    @agent.run
+    async def run(self, agent_input: {{ pascal_name }}RagInput):
+        # Offload retrieval + synthesis to a workflow for retries/concurrency isolation
+        result = await agent.child_execute(
+            workflow={{ pascal_name }}RagSearch,  # class ref
+            workflow_id="{{ name }}-rag-{{'{{'}} agent.uuid() {{'}}'}}",
+            workflow_input={"query": agent_input.query, "messages": agent_input.messages},
+        )
+        return result

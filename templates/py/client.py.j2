@@ -1,0 +1,27 @@
+from typing import List
+from restack_ai import Restack
+
+client = Restack()
+
+async def schedule_agent_{{ name }}(agent_id: str, messages: List[dict]):
+    return await client.schedule_agent(
+        agent_name="{{ pascal_name }}",
+        agent_id=agent_id,
+        agent_input={"messages": messages, "end_on_first_reply": False},
+    )
+
+async def send_messages(agent_id: str, run_id: str, messages: List[dict]):
+    await client.send_agent_event(
+        agent_id=agent_id,
+        run_id=run_id,
+        event_name="messages",
+        event_input={"messages": messages},
+    )
+
+async def end(agent_id: str, run_id: str):
+    await client.send_agent_event(
+        agent_id=agent_id,
+        run_id=run_id,
+        event_name="end",
+        event_input={},
+    )

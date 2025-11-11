@@ -1,0 +1,55 @@
+/* Shared light types to keep templates portable.
+ * Replace with real Restack Node types when wiring the SDK.
+ */
+
+export type Role = "system" | "user" | "assistant" | "tool";
+export interface Message {
+  role: Role;
+  name?: string;
+  content: string;
+}
+
+export interface ToolDefinition {
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  handler: (args: any, ctx: AgentContext) => Promise<any>;
+}
+
+export interface AgentContext {
+  log: Console;
+  config?: Record<string, unknown>;
+}
+
+export interface WorkflowRunContext extends AgentContext {
+  llm: LLMProvider;
+  queue: { enqueue: (name: string, payload: unknown) => Promise<void> };
+  events: { emit: (name: string, payload: unknown) => Promise<void> };
+}
+
+export interface FunctionContext extends AgentContext {}
+
+export interface LLMProvider {
+  complete(args: {
+    model: string;
+    temperature?: number;
+    system?: string;
+    messages: Message[];
+    tools?: ToolDefinition[];
+  }): Promise<{ messages: Message[] }>;
+}
+
+// Extremely small default LLM shim for dev
+export function defaultLLMProvider(): LLMProvider {
+  return {
+    async complete({ messages }) {
+      const last = messages[messages.length - 1];
+      return {
+        messages: [
+          ...messages,
+          { role: "assistant", content: `Echo (LLM): ${last?.content ?? ""}` },
+        ],
+      };
+    },
+  };
+}

@@ -1,0 +1,31 @@
+from datetime import timedelta
+from typing import List
+from pydantic import BaseModel
+from restack_ai.workflow import workflow, import_functions
+
+with import_functions():
+    from src.functions.search import search_index, SearchInput
+    from src.functions.llm_chat import llm_chat, LlmChatInput
+
+class {{ pascal_name }}RagSearchInput(BaseModel):
+    query: str
+    messages: List[dict] = []
+
+@workflow.defn()
+class {{ pascal_name }}RagSearch:
+    @workflow.run
+    async def run(self, workflow_input: {{ pascal_name }}RagSearchInput):
+        # 1) Retrieve
+        passages = await workflow.step(
+            search_index,
+            SearchInput(query=workflow_input.query, top_k=6),
+            start_to_close_timeout=timedelta(seconds={{ timeouts_start_to_close_seconds }}),
+            retry_policy={{ retry_policies_default_json }},
+        )
+        # 2) Synthesize
+        reply = await workflow.step(
+            llm_chat,
+            LlmChatInput(messages=workflow_input.messages + [{"role":"system", "content": f"Use these passages: {passages}"}]),
+            start_to_close_timeout=timedelta(seconds={{ timeouts_start_to_close_seconds }}),
+        )
+        return {"passages": passages, "reply": reply}

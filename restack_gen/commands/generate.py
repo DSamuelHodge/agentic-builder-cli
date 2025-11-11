@@ -49,7 +49,11 @@ class GenerateCommand(Command):
     def _generate(self, gen_type: GenerationType, gen_name: str) -> int:
         """Perform the generation."""
         try:
-            project = ProjectStructure(self.config.cwd)
+            # Always use the provided --cwd (project root) as the base for ProjectStructure
+            project_root = Path(self.config.cwd or Path.cwd())
+            project = ProjectStructure(project_root)
+            # Ensure per-project src/ structure exists
+            project.ensure_structure()
             lang = self._detect_language(project)
             engine = self._setup_engine(lang)
             output_file = self._get_output_path(project, gen_type, gen_name, lang)
@@ -59,7 +63,7 @@ class GenerateCommand(Command):
                 self.dry_run_log(f"Would generate {gen_type.value}: {output_file}")
                 return 0
             # Render and write
-            context = build_template_context(gen_name, app_name=project.root.name)
+            context = build_template_context(gen_name, app_name=project_root.name)
             template_name = f"{gen_type.value}.{lang.value}.j2"
             content = engine.render(template_name, context)
             output_file.write_text(content, encoding="utf-8")

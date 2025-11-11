@@ -1,0 +1,16 @@
+from typing import List
+from pydantic import BaseModel
+from restack_ai.function import function, FunctionFailure, log
+
+class SearchInput(BaseModel):
+    query: str
+    top_k: int = 5
+
+@function.defn()
+async def search_index(function_input: SearchInput) -> List[str]:
+    # Replace with your vector/keyword search call
+    if not function_input.query:
+        raise FunctionFailure("empty query", non_retryable=True)
+    log.debug("search_index", q=function_input.query, k=function_input.top_k)
+    # MOCK
+    return [f"passage {i} for {function_input.query}" for i in range(function_input.top_k)]

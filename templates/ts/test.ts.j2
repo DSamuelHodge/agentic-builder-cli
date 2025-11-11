@@ -1,0 +1,17 @@
+import { describe, it, expect } from "vitest";
+import { create{{ pascal_name }} } from "../src/agents/{{ name }}";
+import { defaultLLMProvider } from "../src/types";
+
+describe("{{ pascal_name }} Agent", () => {
+  it("responds via LLM shim", async () => {
+    const agent = create{{ pascal_name }}(defaultLLMProvider(), {});
+    const out = await agent.run([{ role: "user", content: "hello" }], { log: console });
+    expect(out.at(-1)?.content).toContain("Echo (LLM): hello");
+  });
+
+  it("executes echo tool", async () => {
+    const agent = create{{ pascal_name }}(defaultLLMProvider(), {});
+    const out = await agent.run([{ role: "user", content: "/echo ping" }], { log: console });
+    expect(out.at(-1)?.content).toContain("ping");
+  });
+});

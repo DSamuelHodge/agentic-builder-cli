@@ -1,0 +1,33 @@
+from restack_ai import Restack
+from restack_ai.restack import ServiceOptions
+
+# Agents
+from src.agents.{{ name }} import {{ pascal_name }}
+# Optional extras
+{% if include_stream %}from src.agents.{{ name }}_stream import {{ pascal_name }}Stream{% endif %}
+{% if include_hitl %}from src.agents.{{ name }}_hitl import {{ pascal_name }}Hitl{% endif %}
+
+# Workflows/functions
+from src.workflows.{{ name }}_rag_search import {{ pascal_name }}RagSearch
+from src.functions.llm_chat import llm_chat
+from src.functions.search import search_index
+
+client = Restack()
+
+async def start():
+    await client.start_service(
+        agents=[{{ pascal_name }}{% if include_stream %}, {{ pascal_name }}Stream{% endif %}{% if include_hitl %}, {{ pascal_name }}Hitl{% endif %}],
+        workflows=[{{ pascal_name }}RagSearch],
+        functions=[llm_chat, search_index],
+        task_queue="{{ task_queue | default('restack') }}",
+        options=ServiceOptions(
+            rate_limit={{ service_rate_limit | default(5) }},
+            max_concurrent_function_runs={{ service_max_concurrency_functions | default(10) }},
+            max_concurrent_workflow_runs={{ service_max_concurrency_workflows | default(10) }},
+        ),
+    )
+
+def watch_services():
+    # lightweight dev helper; your CLI can uv-run this
+    import asyncio
+    asyncio.run(start())

@@ -1,6 +1,5 @@
-import pytest
 from restack_gen.core.templates import TemplateEngine, build_template_context
-from pathlib import Path
+import re
 
 
 def test_template_engine_init(tmp_path):
@@ -84,3 +83,27 @@ def test_build_template_context_defaults():
 def test_build_template_context_with_kwargs():
     context = build_template_context("test_name", custom_var="value")
     assert context["custom_var"] == "value"
+
+
+def test_python_identifier_generation(tmp_path):
+    """Test that generated Python code uses valid identifiers for imports and class names."""
+    from restack_gen.core.templates import TemplateEngine, build_template_context
+
+    # Simulate a project/component name with hyphens
+    name = "test-py-app3"
+    app_name = name
+    context = build_template_context(name, app_name=app_name)
+    templates_dir = tmp_path / "templates"
+    templates_dir.mkdir()
+    # Minimal agent template using identifiers
+    agent_template = (
+        "from {{ snake_app_name }}.module import something\n"
+        "class {{ pascal_name }}:\n    pass\n"
+    )
+    (templates_dir / "agent.py.j2").write_text(agent_template)
+    engine = TemplateEngine(templates_dir)
+    rendered = engine.render("agent.py.j2", context)
+    # Check that import uses underscores, not hyphens
+    assert f"from {context['snake_app_name']}.module import" in rendered
+    # Check that class name is valid
+    assert re.search(rf"class {context['pascal_name']}", rendered)

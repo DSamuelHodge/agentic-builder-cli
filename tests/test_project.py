@@ -1,4 +1,3 @@
-import pytest
 from restack_gen.core.project import ProjectStructure
 from pathlib import Path
 

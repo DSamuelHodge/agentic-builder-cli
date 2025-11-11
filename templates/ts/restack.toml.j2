@@ -1,0 +1,6 @@
+# Language-agnostic config; extend as needed.
+name = "{{ app_name }}"
+[defaults]
+timeouts_start_to_close_seconds = {{ timeouts_start_to_close_seconds }}
+retry_policies_default_json = {{ retry_policies_default_json | tojson }}
+host = "${RESTACK_HOST:-http://localhost:5233}"

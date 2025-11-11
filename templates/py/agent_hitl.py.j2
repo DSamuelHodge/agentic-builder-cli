@@ -1,0 +1,56 @@
+from datetime import timedelta
+from typing import List, Optional
+from pydantic import BaseModel
+from restack_ai.agent import agent, condition, import_functions, log
+
+with import_functions():
+    from src.functions.llm_chat import llm_chat, LlmChatInput
+
+class ApprovalEvent(BaseModel):
+    approved: bool
+    comment: Optional[str] = None
+
+class {{ pascal_name }}HitlInput(BaseModel):
+    messages: List[dict] = []
+    require_approval: bool = True
+
+@agent.defn()
+class {{ pascal_name }}Hitl:
+    def __init__(self) -> None:
+        self._end = False
+        self._approval: Optional[ApprovalEvent] = None
+        self._draft: Optional[dict] = None
+
+    @agent.event
+    async def approval(self, event: ApprovalEvent):
+        self._approval = event
+        return {"approved": event.approved}
+
+    @agent.event
+    async def end(self):
+        self._end = True
+        return {"ended": True}
+
+    @agent.run
+    async def run(self, agent_input: {{ pascal_name }}HitlInput):
+        self._draft = await agent.step(
+            function=llm_chat,
+            function_input=LlmChatInput(messages=agent_input.messages),
+            start_to_close_timeout=timedelta(seconds={{ timeouts_start_to_close_seconds }}),
+            retry_policy={{ retry_policies_default_json }},
+        )
+
+        if agent_input.require_approval:
+            # wait until a user sends an 'approval' event or the agent is told to end
+            await condition(lambda: self._approval is not None or self._end)
+
+            if self._end:
+                return {"status": "cancelled"}
+
+            if self._approval and self._approval.approved:
+                return {"status": "sent", "content": self._draft}
+            else:
+                log.info("rejected_by_human", comment=(self._approval or {}).get("comment"))
+                return {"status": "rejected", "content": self._draft}
+
+        return {"status": "auto", "content": self._draft}

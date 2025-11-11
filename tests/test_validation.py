@@ -1,5 +1,4 @@
-import pytest
-from restack_gen.core.validation import Validator, ValidationError
+from restack_gen.core.validation import Validator
 from pathlib import Path
 
 
@@ -14,15 +13,24 @@ def test_validate_name_empty():
 
 
 def test_validate_name_invalid_chars():
-    assert Validator.validate_name("invalid@name") == (False, "'invalid@name' contains invalid characters")
+    assert Validator.validate_name("invalid@name") == (
+        False,
+        "'invalid@name' contains invalid characters",
+    )
 
 
 def test_validate_name_starts_with_digit():
-    assert Validator.validate_name("123bad") == (False, "Name cannot start with a digit")
+    assert Validator.validate_name("123bad") == (
+        False,
+        "Name cannot start with a digit",
+    )
 
 
 def test_validate_name_starts_with_underscore():
-    assert Validator.validate_name("_private") == (False, "Name should not start with underscore (convention)")
+    assert Validator.validate_name("_private") == (
+        False,
+        "Name should not start with underscore (convention)",
+    )
 
 
 def test_validate_name_python_keyword():
@@ -41,9 +49,15 @@ def test_validate_path_valid(tmp_path):
 
 def test_validate_path_must_exist(tmp_path):
     nonexistent = tmp_path / "missing"
-    assert Validator.validate_path(nonexistent, must_exist=True) == (False, f"Path does not exist: {nonexistent}")
+    assert Validator.validate_path(nonexistent, must_exist=True) == (
+        False,
+        f"Path does not exist: {nonexistent}",
+    )
 
 
 def test_validate_path_suspicious():
     suspicious = Path("../../../etc/passwd")
-    assert Validator.validate_path(suspicious) == (False, "Path contains suspicious '..' components")
+    assert Validator.validate_path(suspicious) == (
+        False,
+        "Path contains suspicious '..' components",
+    )
