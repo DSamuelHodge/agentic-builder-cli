@@ -81,3 +81,7 @@ Desktop.ini
 
 # Docs
 .docs/
+
+# Tests
+tests/
+.tests/
