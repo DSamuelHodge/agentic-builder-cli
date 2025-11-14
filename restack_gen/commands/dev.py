@@ -11,19 +11,39 @@ class DevCommand(Command):
     """Start development server."""
 
     def execute(self, args: list[str]) -> int:
+        import sys
+        import shutil
         project = ProjectStructure(self.config.cwd)
-        run_script = project.scripts_dir / "run_engine.sh"
-        if not run_script.exists():
-            print_warning("scripts/run_engine.sh not found")
-            print("Create this script to start your local engine")
+        run_script_sh = project.scripts_dir / "run_engine.sh"
+        run_script_bat = project.scripts_dir / "run_engine.bat"
+        script_to_run = None
+        if sys.platform.startswith("win") and run_script_bat.exists():
+            script_to_run = run_script_bat
+        elif run_script_sh.exists():
+            script_to_run = run_script_sh
+        if not script_to_run:
+            print_warning("No run_engine script found (scripts/run_engine.sh or scripts/run_engine.bat)")
+            print("Create one of these scripts to start your local engine")
             return 1
         if self.config.dry_run:
-            self.dry_run_log(f"Would execute: {run_script}")
+            self.dry_run_log(f"Would execute: {script_to_run}")
             return 0
         try:
             print_info("Starting local engine...")
-            result = subprocess.run([str(run_script)], cwd=project.root)
-            return result.returncode
+            if sys.platform.startswith("win") and script_to_run.suffix == ".bat":
+                result = subprocess.run([str(script_to_run)], cwd=project.root, shell=True)
+                return result.returncode
+            elif sys.platform.startswith("win") and script_to_run.suffix == ".sh":
+                bash_path = shutil.which("bash")
+                if bash_path:
+                    result = subprocess.run([bash_path, str(script_to_run)], cwd=project.root)
+                    return result.returncode
+                else:
+                    print_error("Bash is required to run .sh scripts on Windows. Please install Git Bash or WSL.")
+                    return 1
+            else:
+                result = subprocess.run([str(script_to_run)], cwd=project.root)
+                return result.returncode
         except Exception as e:
             print_error(f"Failed to start dev server: {e}")
             return 1

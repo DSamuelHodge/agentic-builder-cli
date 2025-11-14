@@ -37,12 +37,20 @@ def test_new_command_get_app_directory(tmp_path):
 # --- RoutesCommand ---
 def test_routes_command_print_section(capsys, tmp_path):
     cmd = RoutesCommand(Config(cwd=tmp_path))
-    # Create dummy files
-    src = tmp_path / "src"
-    src.mkdir()
-    (src / "agent_test.py").write_text("")
-    (src / "workflow_test.py").write_text("")
-    (src / "function_test.py").write_text("")
+    # Create service.py with registered components
+    service_py = tmp_path / "service.py"
+    service_py.write_text("""
+from restack_ai import Restack
+
+client = Restack()
+
+async def main():
+    await client.start_service(
+        agents=[AgentTest],
+        workflows=[WorkflowTest],
+        functions=[function_test]
+    )
+""")
     # Should print all sections
     cmd.execute([])
     out = capsys.readouterr().out

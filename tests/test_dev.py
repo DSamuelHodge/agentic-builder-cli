@@ -10,7 +10,7 @@ def test_dev_command_script_not_found(tmp_path, capsys):
     result = cmd.execute([])
     out = capsys.readouterr().out
     assert result == 1
-    assert "not found" in out
+    assert "No run_engine script found" in out
 
 
 def test_dev_command_dry_run(tmp_path, capsys):

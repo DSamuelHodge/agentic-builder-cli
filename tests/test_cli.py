@@ -92,9 +92,10 @@ def test_main_keyboard_interrupt(monkeypatch, capsys):
 
     monkeypatch.setattr("restack_gen.cli.CommandRegistry", DummyRegistry)
     result = cli.main()
-    out = capsys.readouterr().out
+    captured = capsys.readouterr()
+    out, err = captured.out, captured.err
     assert result == 130
-    assert "Cancelled by user" in out
+    assert "Cancelled by user" in err
 
 
 def test_main_unexpected_exception(monkeypatch, capsys):

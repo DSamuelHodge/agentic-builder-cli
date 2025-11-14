@@ -7,9 +7,21 @@ from pathlib import Path
 class ProjectStructure:
     """Handles project directory structure and paths."""
 
-    def __init__(self, project_root: Path):
-        # Always use the provided project_root directly (do not climb up)
-        self.root = project_root.resolve()
+    def __init__(self, project_root: Path | None = None):
+        # Use provided project_root or default to current working directory
+        if project_root is None:
+            start_path = Path.cwd().resolve()
+        else:
+            start_path = project_root.resolve()
+
+        # Search for marker file (restack.toml) in current and parent directories
+        marker = "restack.toml"
+        root = start_path
+        for parent in [start_path] + list(start_path.parents):
+            if (parent / marker).exists():
+                root = parent
+                break
+        self.root = root
         self.src_dir = self.root / "src"
         self.tests_dir = self.root / "tests"
         self.scripts_dir = self.root / "scripts"
