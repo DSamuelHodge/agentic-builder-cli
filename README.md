@@ -77,34 +77,34 @@ restack-gen doctor
 
 ## Commands
 
-| Command | Description | Arguments |
-|---------|-------------|-----------|
-| `new <app_name>` | Create a new Restack application with full project structure | `<app_name>`: Application name |
-| `generate <type> <name>` | Generate code components using templates | `<type>`: agent/function/workflow<br>`<name>`: Component name |
-| `routes` | List all registered agents, workflows, and functions in the project | None |
-| `dev` | Start the local development server and hot-reload environment | None |
-| `build` | Run type checking, linting, and code formatting validation | None |
-| `test` | Execute the complete test suite with pytest | `[args]`: Additional pytest arguments |
-| `doctor` | Perform comprehensive environment and dependency diagnostics | None |
-| `list-templates` | Display all available code generation templates | None |
-| `version` | Show the current version of restack-gen | None |
-| `help` | Display help information and usage instructions | None |
+| Command | Aliases | Description | Arguments |
+|---------|---------|-------------|-----------|
+| `new` | | Create a new Restack application with full project structure | `<app_name>`: Application name |
+| `generate` | `g` | Generate code components using templates | `<type> <name>`: agent/function/workflow and component name |
+| `routes` | | List all registered agents, workflows, and functions in the project | None |
+| `dev` | | Start the local development server and hot-reload environment | None |
+| `build` | | Run type checking, linting, and code formatting validation | None |
+| `test` | | Execute the complete test suite with pytest | `[args]`: Additional pytest arguments |
+| `doctor` | | Perform comprehensive environment and dependency diagnostics | None |
+| `list-templates` | `ls-templates` | Display all available code generation templates | None |
+| `version` | | Show the current version of restack-gen | None |
+| `help` | | Display help information and usage instructions | None |
 
 ## Command Flags
 
-| Flag | Description | Applies To |
-|------|-------------|------------|
-| `--lang <py\|ts>` | Specify target language (Python/TypeScript) | `new`, `generate`, `--concurrent-new` |
-| `--pm <uv\|pip\|pnpm\|npm>` | Set preferred package manager | `new` |
-| `--cwd <path>` | Execute command in specified directory | All commands |
-| `--force` | Overwrite existing files without confirmation | `generate`, `new` |
-| `--dry-run` | Preview actions without making changes | `new`, `generate`, `dev` |
-| `--concurrent-new <names>` | Generate multiple projects concurrently (provide names) | Global (no command needed) |
-| `--quiet` | Suppress informational output | All commands |
-| `--verbose` | Enable detailed logging and output | All commands |
-| `--yes` | Automatically answer yes to all prompts | `generate` |
-| `--no-color` | Disable ANSI color output | All commands |
-| `--help` | Display command-specific help | All commands |
+| Long Flag | Short Flag | Description | Applies To |
+|-----------|------------|-------------|------------|
+| `--lang <py\|ts>` | | Specify target language (Python/TypeScript) | `new`, `generate`, `--concurrent-new` |
+| `--pm <uv\|pip\|pnpm\|npm>` | | Set preferred package manager | `new` |
+| `--cwd <path>` | | Execute command in specified directory | All commands |
+| `--force` | | Overwrite existing files without confirmation | `generate`, `new` |
+| `--dry-run` | | Preview actions without making changes | `new`, `generate`, `dev` |
+| `--concurrent-new <names>` | | Generate multiple projects concurrently (provide names) | Global (no command needed) |
+| `--quiet` | `-q` | Suppress informational output | All commands |
+| `--verbose` | `-v` | Enable detailed logging and output | All commands |
+| `--yes` | `-y` | Automatically answer yes to all prompts | `generate` |
+| `--no-color` | | Disable ANSI color output | All commands |
+| `--help` | `-h` | Display command-specific help | All commands |
 ## Concurrent Project Generation
 
 You can generate multiple projects in parallel using the `--concurrent-new` flag. This is useful for E2E testing, CI/CD, or bootstrapping several projects at once.

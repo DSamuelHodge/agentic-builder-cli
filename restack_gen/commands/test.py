@@ -22,3 +22,6 @@ class RestackTestsCommand(Command):
         except FileNotFoundError:
             print_error("pytest not found", hint="Install with: pip install pytest")
             return 1
+        except Exception as e:
+            print_error(f"Failed to run tests: {e}")
+            return 1
