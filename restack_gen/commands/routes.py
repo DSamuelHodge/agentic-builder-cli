@@ -34,15 +34,22 @@ class RoutesCommand(Command):
                 content = f.read()
             # Simple regex to find the lists
             import re
-            agent_match = re.search(r'agents=\[([^\]]*)\]', content)
-            workflow_match = re.search(r'workflows=\[([^\]]*)\]', content)
-            function_match = re.search(r'functions=\[([^\]]*)\]', content)
+
+            agent_match = re.search(r"agents=\[([^\]]*)\]", content)
+            workflow_match = re.search(r"workflows=\[([^\]]*)\]", content)
+            function_match = re.search(r"functions=\[([^\]]*)\]", content)
             if agent_match:
-                agents = [x.strip() for x in agent_match.group(1).split(',') if x.strip()]
+                agents = [
+                    x.strip() for x in agent_match.group(1).split(",") if x.strip()
+                ]
             if workflow_match:
-                workflows = [x.strip() for x in workflow_match.group(1).split(',') if x.strip()]
+                workflows = [
+                    x.strip() for x in workflow_match.group(1).split(",") if x.strip()
+                ]
             if function_match:
-                functions = [x.strip() for x in function_match.group(1).split(',') if x.strip()]
+                functions = [
+                    x.strip() for x in function_match.group(1).split(",") if x.strip()
+                ]
         except Exception:
             pass
         return agents, workflows, functions

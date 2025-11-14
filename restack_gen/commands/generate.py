@@ -50,7 +50,9 @@ class GenerateCommand(Command):
         """Perform the generation."""
         try:
             # Always use the provided --cwd (project root) as the base for ProjectStructure, resolved absolutely
-            project_root = Path(self.config.cwd).resolve() if self.config.cwd else Path.cwd()
+            project_root = (
+                Path(self.config.cwd).resolve() if self.config.cwd else Path.cwd()
+            )
             project = ProjectStructure(project_root)
             # Ensure per-project src/ structure exists
             project.ensure_structure()

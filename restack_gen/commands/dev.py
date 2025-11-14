@@ -13,6 +13,7 @@ class DevCommand(Command):
     def execute(self, args: list[str]) -> int:
         import sys
         import shutil
+
         project = ProjectStructure(self.config.cwd)
         run_script_sh = project.scripts_dir / "run_engine.sh"
         run_script_bat = project.scripts_dir / "run_engine.bat"
@@ -22,7 +23,9 @@ class DevCommand(Command):
         elif run_script_sh.exists():
             script_to_run = run_script_sh
         if not script_to_run:
-            print_warning("No run_engine script found (scripts/run_engine.sh or scripts/run_engine.bat)")
+            print_warning(
+                "No run_engine script found (scripts/run_engine.sh or scripts/run_engine.bat)"
+            )
             print("Create one of these scripts to start your local engine")
             return 1
         if self.config.dry_run:
@@ -31,15 +34,21 @@ class DevCommand(Command):
         try:
             print_info("Starting local engine...")
             if sys.platform.startswith("win") and script_to_run.suffix == ".bat":
-                result = subprocess.run([str(script_to_run)], cwd=project.root, shell=True)
+                result = subprocess.run(
+                    [str(script_to_run)], cwd=project.root, shell=True
+                )
                 return result.returncode
             elif sys.platform.startswith("win") and script_to_run.suffix == ".sh":
                 bash_path = shutil.which("bash")
                 if bash_path:
-                    result = subprocess.run([bash_path, str(script_to_run)], cwd=project.root)
+                    result = subprocess.run(
+                        [bash_path, str(script_to_run)], cwd=project.root
+                    )
                     return result.returncode
                 else:
-                    print_error("Bash is required to run .sh scripts on Windows. Please install Git Bash or WSL.")
+                    print_error(
+                        "Bash is required to run .sh scripts on Windows. Please install Git Bash or WSL."
+                    )
                     return 1
             else:
                 result = subprocess.run([str(script_to_run)], cwd=project.root)

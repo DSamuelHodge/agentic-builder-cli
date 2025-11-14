@@ -18,6 +18,7 @@ class NewCommand(Command):
 
     def execute(self, args: list[str]) -> int:
         import shutil
+
         if len(args) < 1:
             print_error("App name required")
             print("Usage: restack-gen new <app_name> [options]")
@@ -48,6 +49,7 @@ class NewCommand(Command):
                     print_warning(f"Failed to clean up {app_dir}: {cleanup_err}")
             if self.config.verbose:
                 import traceback
+
                 traceback.print_exc()
             return 1
 
@@ -82,6 +84,7 @@ class NewCommand(Command):
         # --- BEGIN: Write tsconfig.json for TypeScript projects ---
         if lang == Language.TYPESCRIPT:
             import datetime
+
             template_name = "tsconfig.json.j2"
             context = {
                 "project_name": app_name,
@@ -98,11 +101,14 @@ class NewCommand(Command):
                     f.write(content)
                 self.log(f"Generated tsconfig.json: {tsconfig_path.name}")
             else:
-                print_warning("tsconfig.json.j2 template not found for TypeScript project.")
+                print_warning(
+                    "tsconfig.json.j2 template not found for TypeScript project."
+                )
         # --- END: Write tsconfig.json for TypeScript projects ---
         # --- BEGIN: Write pyproject.toml for Python projects ---
         if lang == Language.PYTHON:
             import datetime
+
             template_name = "pyproject.toml.j2"
             context = {
                 "project_name": app_name,
@@ -119,7 +125,9 @@ class NewCommand(Command):
                     f.write(content)
                 self.log(f"Generated pyproject.toml: {pyproject_path.name}")
             else:
-                print_warning("pyproject.toml.j2 template not found for Python project.")
+                print_warning(
+                    "pyproject.toml.j2 template not found for Python project."
+                )
         # --- END: Write pyproject.toml for Python projects ---
         self._create_service(app_dir, app_name)
         self._create_run_script(project.scripts_dir)

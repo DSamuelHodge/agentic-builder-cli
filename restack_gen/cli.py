@@ -20,6 +20,7 @@ from .utils.console import Color, print_error, print_info, print_success
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+    from .commands.new import NewCommand
 
 
 class ExitCode(IntEnum):
@@ -139,7 +140,9 @@ class ConcurrentProjectCreator:
         Returns:
             Exit code (0 if all succeeded, 1 if any failed).
         """
-        successful = [name for name, code in results.items() if code == ExitCode.SUCCESS]
+        successful = [
+            name for name, code in results.items() if code == ExitCode.SUCCESS
+        ]
         failed = [name for name, code in results.items() if code != ExitCode.SUCCESS]
 
         if failed:
