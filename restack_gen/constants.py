@@ -1,6 +1,3 @@
-# restack-gen 0.1.0
-# Date: 2025-11-10
-# Timestamp: 2025-11-10T10:38:06.925606
 from enum import Enum
 from dataclasses import dataclass
 from pathlib import Path

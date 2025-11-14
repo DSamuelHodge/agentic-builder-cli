@@ -5,11 +5,13 @@ services:
     pull_policy: always
     container_name: restack
     ports:
-      - "5233:5233"
-      - "6233:6233"
-      - "7233:7233"
-      - "9233:9233"
-      - "10233:10233"
-      - "11233:11233"
-      - "12233:12233"
+      - "5233:5233"   # Developer UI (workflow inspector, agent status)
+      - "6233:6233"   # REST API (schedule agents, send events)
+      - "7233:7233"   # Temporal server (gRPC)
+      - "9233:9233"   # Temporal Web UI
+      - "10233:10233" # Metrics endpoint (Prometheus)
+      - "11233:11233" # Internal services
+      - "12233:12233" # ClickHouse interface
     restart: unless-stopped
+
+
