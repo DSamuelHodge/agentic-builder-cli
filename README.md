@@ -3,7 +3,7 @@
 [![CI](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/concurrent-generation.yml/badge.svg)](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/concurrent-generation.yml)
 [![Version](https://img.shields.io/github/v/release/DSamuelHodge/agentic-builder-cli?sort=semver)](https://github.com/DSamuelHodge/agentic-builder-cli/releases)
 [![License](https://img.shields.io/github/license/DSamuelHodge/agentic-builder-cli)](https://github.com/DSamuelHodge/agentic-builder-cli/blob/main/LICENSE)
-[![Docker](https://img.shields.io/docker/pulls/dsamuelhodge/agentic-builder-cli)](https://hub.docker.com/r/dsamuelhodge/agentic-builder-cli)
+
 
 A command-line interface tool for scaffolding opinionated Restack agent frameworks in Python and TypeScript. Provides comprehensive project generation, code templates, and development workflow management.
 
