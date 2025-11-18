@@ -1,6 +1,6 @@
 # Interactive Mode — Checklist
 
-This checklist tracks completed work and outstanding items for the interactive CLI feature.
+This checklist tracks completed work and outstanding items for the interactive CLI feature, for details refer to agentic-builder-cli\.docs\instructions.md
 
 ## Completed ✅ (implemented & merged to feature branch `feature-interactive-mode`)
 - [x] Entry point dispatcher: `restack_gen.__main__:main` that detects TTY & `-i/--interactive` and dispatches accordingly.
