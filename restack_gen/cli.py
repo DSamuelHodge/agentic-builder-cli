@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING
 from .commands import CommandRegistry
 from .constants import Config, Language
 from .utils.console import Color, print_error, print_info, print_success
+from .utils.ui_components import with_spinner, with_progress_bar
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -31,26 +32,23 @@ class ExitCode(IntEnum):
     INTERRUPTED = 130
 
 
+
 class ConcurrentProjectCreator:
     """Handles concurrent creation of multiple projects."""
 
     def __init__(self, config: Config) -> None:
         self.config = config
 
-    def create_projects(self, project_names: Sequence[str]) -> int:
-        """Create multiple projects concurrently.
-
-        Args:
-            project_names: List of project names to create.
-
-        Returns:
-            Exit code (0 for success, 1 for any failures).
-        """
+    @with_progress_bar(description="[cyan]Creating projects...")
+    def create_projects(self, project_names: 'Sequence[str]', *, progress, description: str) -> int:
+        """Create multiple projects concurrently with a progress bar."""
         if not project_names:
             print_error("No project names provided for concurrent creation")
             return ExitCode.ERROR
 
         results: dict[str, int] = {}
+        total = len(project_names)
+        task = progress.add_task(description, total=total)
 
         with ThreadPoolExecutor() as executor:
             future_to_name = {
@@ -58,25 +56,20 @@ class ConcurrentProjectCreator:
                 for name in project_names
             }
 
-            total = len(project_names)
-            completed = 0
-
             for future in as_completed(future_to_name):
-                completed += 1
                 name = future_to_name[future]
-
                 try:
                     result_name, exit_code = future.result()
                     results[result_name] = exit_code
                     status = "✓" if exit_code == ExitCode.SUCCESS else "✗"
-
+                    progress.update(task, advance=1, description=f"[cyan]Processing {name}")
                     if not self.config.quiet:
-                        print_info(f"[{completed}/{total}] {status} {result_name}")
-
+                        print_info(f"{status} {result_name}")
                 except Exception as e:
                     results[name] = ExitCode.ERROR
+                    progress.update(task, advance=1, description=f"[red]Failed {name}")
                     if not self.config.quiet:
-                        print_info(f"[{completed}/{total}] ✗ {name}")
+                        print_info(f"✗ {name}")
                     if self.config.verbose:
                         print_error(f"Error creating {name}: {e}")
 

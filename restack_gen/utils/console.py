@@ -6,6 +6,10 @@ import locale
 from typing import Optional
 
 
+from rich.console import Console
+
+console = Console()
+
 class Color:
     """ANSI color codes for terminal output."""
 

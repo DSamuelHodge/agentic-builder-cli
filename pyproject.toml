@@ -8,7 +8,7 @@ packages = ["restack_gen"]
 
 [project]
 name = "restack-gen"
-version = "0.2.0"
+version = "0.3.0"
 description = "CLI tool to scaffold opinionated Restack agent frameworks in Python and TypeScript."
 authors = [
     { name = "Derrick Hodge", email = "team@thethinking.company" }
