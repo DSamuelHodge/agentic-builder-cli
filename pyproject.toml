@@ -18,11 +18,13 @@ requires-python = ">=3.8"
 dependencies = [
     "click>=8.0.0",
     "jinja2>=3.0.0",
-    "restack-ai>=0.0.115"
+    "restack-ai>=0.0.115",
+    "rich>=13.0.0"
 ]
 
-[project.scripts]
-restack-gen = "restack_gen.__main__:main"
+[project.optional-dependencies]
+interactive = ["prompt_toolkit>=3.0.0"]
+dev = ["pytest>=7.0.0", "pytest-cov>=4.0.0", "ruff>=0.1.0"]
 
 [tool.pytest.ini_options]
 addopts = "-ra -q"
