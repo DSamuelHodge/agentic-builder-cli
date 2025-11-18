@@ -61,12 +61,18 @@ class InteractivePrompter:
         package_manager = self.prompt_input(
             "Package manager (uv/pip/pnpm/npm)", "uv"
         ).lower()
-
+        output_dir = self.prompt_input(
+            "Output directory (absolute or relative path)", str(Path.cwd())
+        )
         if language not in ("py", "ts"):
             language = "py"
+
+        # Convert to Path and resolve
+        working_directory = Path(output_dir).expanduser().resolve()
 
         return PromptResult(
             project_name=project_name,
             language=language,
             package_manager=package_manager,
+            working_directory=working_directory,
         )
