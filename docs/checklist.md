@@ -17,27 +17,26 @@ This checklist tracks completed work and outstanding items for the interactive C
   - `CHANGELOG.md`
   - `docs/interactive-mode.md` — detailed description, tests and future items.
 - [x] Created and pushed branch `feature-interactive-mode` and committed the changes.
-
-## Outstanding / Future work ❗ (not yet implemented)
-- [ ] Full `prompt_toolkit` UX features
-  - [ ] `restack_gen/interactive/theme.py` — color and styles
-  - [ ] `restack_gen/interactive/completers.py` — auto-completion for language, template choices, package managers
-  - [ ] `restack_gen/interactive/validators.py` — input validation (project names, paths)
-  - [ ] Integrate `prompt_toolkit`-based UI elements into `prompts.py` for improved UX
-- [ ] Templates & project presets
-  - [ ] `restack_gen/interactive/templates.py` — template selection & defaults
-  - [ ] Template-driven `InteractiveSession.start_with_template()` and CLI path `--template` support
-- [ ] Context-aware defaults & persistence
-  - [ ] `restack_gen/interactive/context.py` to store user defaults (`~/.config/restack-gen/preferences.json`)
-  - [ ] Use context to prefill choices in the wizard
-- [ ] Wizard & multi-step UI enhancements
-  - [ ] Add `restack_gen/interactive/wizard.py` implementing multi-step flows and feature selection
-  - [ ] Add `prompt_toolkit.shortcuts` interactions (checkbox lists, menus)
-- [ ] Error handling & fallbacks
-  - [ ] `restack_gen/interactive/fallback.py` to check terminal capabilities and advise fallback to standard CLI
-  - [ ] `restack_gen/interactive/sanitize.py` to sanitize inputs
-  - [ ] `restack_gen/interactive/signals.py` to handle SIGINT/SIGTERM gracefully
-- [ ] Additional tests
+- [x] Full `prompt_toolkit` UX features
+  - [x] `restack_gen/interactive/theme.py` — color and styles
+  - [x] `restack_gen/interactive/completers.py` — auto-completion for language, template choices, package managers
+  - [x] `restack_gen/interactive/validators.py` — input validation (project names, paths)
+  - [x] Integrate `prompt_toolkit`-based UI elements into `prompts.py` for improved UX
+- [x] Templates & project presets
+  - [x] `restack_gen/interactive/templates.py` — template selection & defaults
+  - [x] Template-driven `InteractiveSession.start_with_template()` and CLI path `--template` support
+- [x] Context-aware defaults & persistence
+  - [x] `restack_gen/interactive/context.py` to store user defaults (`~/.config/restack-gen/preferences.json`)
+  - [x] Use context to prefill choices in the wizard
+- [x] Wizard & multi-step UI enhancements
+  - [x] Add `restack_gen/interactive/wizard.py` implementing multi-step flows and feature selection
+  - [x] Add `prompt_toolkit.shortcuts` interactions (checkbox lists, menus)
+- [x] Error handling & fallbacks
+  - [x] `restack_gen/interactive/fallback.py` to check terminal capabilities and advise fallback to standard CLI
+  - [x] `restack_gen/interactive/sanitize.py` to sanitize inputs
+  - [x] `restack_gen/interactive/signals.py` to handle SIGINT/SIGTERM gracefully
+- [x] Additional tests
+  - [x] Unit tests for validators, templates, context detection, fallback, and wizard basics (`tests/test_interactive_*.py`)
   - [ ] E2E tests for full interactive session (`tests/e2e/test_interactive_flow.py`) mocking `prompt_toolkit.prompt`
   - [ ] Integration tests verifying created project structure for both `py` and `ts`
   - [ ] Performance tests for startup & import time
