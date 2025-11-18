@@ -37,7 +37,7 @@ This checklist tracks completed work and outstanding items for the interactive C
   - [x] `restack_gen/interactive/signals.py` to handle SIGINT/SIGTERM gracefully
 - [x] Additional tests
   - [x] Unit tests for validators, templates, context detection, fallback, and wizard basics (`tests/test_interactive_*.py`)
-  - [ ] E2E tests for full interactive session (`tests/e2e/test_interactive_flow.py`) mocking `prompt_toolkit.prompt`
+  - [x] E2E tests for full interactive session (`tests/e2e/test_interactive_flow.py`) mocking `prompt_toolkit.prompt`
   - [ ] Integration tests verifying created project structure for both `py` and `ts`
   - [ ] Performance tests for startup & import time
 - [ ] Documentation & Release
