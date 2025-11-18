@@ -41,6 +41,9 @@ All notable changes to this project will be documented in this file.
 - The interactive implementation is intentionally minimal to keep dependencies optional; we only use `prompt_toolkit` if available.
 - The new interactive mode leverages the existing `NewCommand` to avoid duplicating project creation logic.
 
+### Summary
+This release introduces a comprehensive interactive CLI mode for restack-gen, providing a guided wizard experience for project creation. Key features include auto-completion, input validation, context-aware defaults, error handling, and graceful fallbacks. The implementation includes full test coverage (unit, integration, E2E, and performance tests), CI/CD automation, documentation updates, and optional telemetry. All interactive features are backward-compatible and maintain the tool's lightweight nature.
+
 ---
 
 For detailed documentation and usage examples, see `docs/interactive-mode.md`.

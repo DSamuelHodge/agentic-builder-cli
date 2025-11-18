@@ -4,7 +4,7 @@
 from pathlib import Path
 from .base import Command
 from ..constants import VERSION, Language
-from ..utils.console import Color, print_error, print_warning
+from ..utils.console import Color, print_error, print_warning, print_success
 
 
 class VersionCommand(Command):
@@ -91,14 +91,18 @@ class TelemetryCommand(Command):
     def _show_status(self):
         """Show current telemetry status."""
         from ..utils.telemetry import get_collector
+
         collector = get_collector()
         status = "enabled" if collector.is_enabled() else "disabled"
         print(f"Telemetry is currently {status}.")
-        print("Use 'restack-gen telemetry enable' or 'restack-gen telemetry disable' to change.")
+        print(
+            "Use 'restack-gen telemetry enable' or 'restack-gen telemetry disable' to change."
+        )
 
     def _enable_telemetry(self):
         """Enable telemetry."""
         from ..utils.telemetry import get_collector
+
         collector = get_collector()
         collector.enable()
         print_success("Telemetry enabled. Thank you for helping improve restack-gen!")
@@ -106,9 +110,13 @@ class TelemetryCommand(Command):
     def _disable_telemetry(self):
         """Disable telemetry."""
         from ..utils.telemetry import get_collector
+
         collector = get_collector()
         collector.disable()
         print_success("Telemetry disabled.")
+
+
+class HelpCommand(Command):
     """Show help information."""
 
     def execute(self, args: list[str]) -> int:

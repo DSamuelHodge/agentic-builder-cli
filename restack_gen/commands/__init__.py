@@ -24,7 +24,12 @@ class CommandRegistry:
         from .build import BuildCommand
         from .test import RestackTestsCommand
         from .doctor import DoctorCommand
-        from .info import VersionCommand, HelpCommand, ListTemplatesCommand, TelemetryCommand
+        from .info import (
+            VersionCommand,
+            HelpCommand,
+            ListTemplatesCommand,
+            TelemetryCommand,
+        )
 
         self._commands = {
             "new": NewCommand,
