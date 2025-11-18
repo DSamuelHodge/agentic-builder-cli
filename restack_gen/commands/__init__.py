@@ -24,7 +24,7 @@ class CommandRegistry:
         from .build import BuildCommand
         from .test import RestackTestsCommand
         from .doctor import DoctorCommand
-        from .info import VersionCommand, HelpCommand, ListTemplatesCommand
+        from .info import VersionCommand, HelpCommand, ListTemplatesCommand, TelemetryCommand
 
         self._commands = {
             "new": NewCommand,
@@ -39,6 +39,7 @@ class CommandRegistry:
             "list-templates": ListTemplatesCommand,
             "ls-templates": ListTemplatesCommand,
             "help": HelpCommand,
+            "telemetry": TelemetryCommand,
         }
 
     def get(self, command: str) -> Optional[Command]:

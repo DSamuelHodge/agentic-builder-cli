@@ -41,15 +41,15 @@ This checklist tracks completed work and outstanding items for the interactive C
   - [x] Integration tests verifying created project structure for both `py` and `ts`
   - [x] Performance tests for startup & import time
 - [ ] Documentation & Release
-  - [ ] README updated with interactive examples and `--interactive` usage
-  - [ ] Add `help`/CLI docs changes to `src/restack_gen/commands/info.py` to include interactive section
-  - [ ] Changelog bump and release notes
+  - [x] README updated with interactive examples and `--interactive` usage
+  - [x] Add `help`/CLI docs changes to `src/restack_gen/commands/info.py` to include interactive section
+  - [x] Changelog bump and release notes
 - [ ] CI / Automation
-  - [ ] Add GitHub Actions to run unit tests and e2e tests on PRs
-  - [ ] Add linting and style checks (ruff, black) enforced on PRs
+  - [x] Add GitHub Actions to run unit tests and e2e tests on PRs
+  - [x] Add linting and style checks (ruff, black) enforced on PRs
 - [ ] Telemetry & Metrics (optional, opt-in)
-  - [ ] `utils/telemetry.py`, record summary metrics like usage count, mode used, and durations
-  - [ ] Add configuration to opt-in/out of telemetry
+  - [x] `utils/telemetry.py`, record summary metrics like usage count, mode used, and durations
+  - [x] Add configuration to opt-in/out of telemetry
 
 ## Next actionable recommendations
 1. Implement `interactive/templates.py` and wire templates into `InteractiveSession` (medium priority).
