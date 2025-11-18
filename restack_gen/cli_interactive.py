@@ -4,6 +4,7 @@ This is a minimal interactive mode that guides the user through
 project creation. It uses prompt_toolkit if available, otherwise falls
 back to built-in input().
 """
+
 from __future__ import annotations
 
 import sys
@@ -45,7 +46,7 @@ class InteractiveCLI:
 
         args, _ = parser.parse_known_args(argv)
 
-        from .constants import Config, Language
+        from .constants import Config
         from pathlib import Path
 
         lang = None
@@ -63,7 +64,6 @@ class InteractiveCLI:
 
     def _use_prompt_toolkit(self) -> bool:
         try:
-            import prompt_toolkit  # type: ignore
 
             return True
         except Exception:
@@ -73,7 +73,9 @@ class InteractiveCLI:
         if self._use_prompt_toolkit():
             from prompt_toolkit import prompt
 
-            prompt_message = f"{message} " if default is None else f"{message} [{default}] "
+            prompt_message = (
+                f"{message} " if default is None else f"{message} [{default}] "
+            )
             result = prompt(prompt_message)
             if not result and default is not None:
                 return default
@@ -100,7 +102,11 @@ class InteractiveCLI:
         try:
             print_success("🚀 Welcome to restack-gen (interactive mode)")
 
-            action = self._prompt("What would you like to do? (new/help/exit)", "new").strip().lower()
+            action = (
+                self._prompt("What would you like to do? (new/help/exit)", "new")
+                .strip()
+                .lower()
+            )
 
             if action == "new":
                 return self._handle_new()
@@ -152,7 +158,11 @@ class InteractiveCLI:
 
         # If not auto-confirmed, ask the user
         if not self.config.yes:
-            confirm = self._prompt(f"Create project '{result.project_name}'? (y/N)", "N").strip().lower()
+            confirm = (
+                self._prompt(f"Create project '{result.project_name}'? (y/N)", "N")
+                .strip()
+                .lower()
+            )
             if confirm not in ("y", "yes"):
                 print_info("Cancelled by user")
                 return ExitCode.SUCCESS

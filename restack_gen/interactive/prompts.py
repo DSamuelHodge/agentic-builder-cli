@@ -4,6 +4,7 @@ We try to leverage prompt_toolkit if installed; otherwise we fall back
 on the built-in input() function. We keep the prompter API simple for
 integration with existing commands.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -26,12 +27,11 @@ class PromptResult:
 
 
 class InteractivePrompter:
-    def __init__(self, config: 'Config'):
+    def __init__(self, config: "Config"):
         self.config = config
 
     def _has_prompt_toolkit(self) -> bool:
         try:
-            import prompt_toolkit  # type: ignore
 
             return True
         except Exception:
@@ -58,7 +58,9 @@ class InteractivePrompter:
     def run_full_wizard(self) -> PromptResult:
         project_name = self.prompt_input("Project name")
         language = self.prompt_input("Language (py/ts)", "py").lower()
-        package_manager = self.prompt_input("Package manager (uv/pip/pnpm/npm)", "uv").lower()
+        package_manager = self.prompt_input(
+            "Package manager (uv/pip/pnpm/npm)", "uv"
+        ).lower()
 
         if language not in ("py", "ts"):
             language = "py"

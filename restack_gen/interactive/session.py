@@ -1,4 +1,5 @@
 """Simple interactive session orchestrator."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -21,7 +22,7 @@ class PromptResult:
 
 
 class InteractiveSession:
-    def __init__(self, config: 'Config'):
+    def __init__(self, config: "Config"):
         self.config = config
         self.prompter = InteractivePrompter(config)
 
