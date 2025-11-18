@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.scripts]
-restack-gen = "restack_gen.cli:main"
+restack-gen = "restack_gen.__main__:main"
 
 [tool.pytest.ini_options]
 addopts = "-ra -q"
