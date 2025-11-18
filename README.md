@@ -1,6 +1,6 @@
 # restack-gen
 
-[![CI](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/concurrent-generation.yml/badge.svg)](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/concurrent-generation.yml)
+[![CI](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/concurrent-generation.yml/badge.svg)](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/v/release/DSamuelHodge/agentic-builder-cli?sort=semver)](https://github.com/DSamuelHodge/agentic-builder-cli/releases)
 [![License](https://img.shields.io/github/license/DSamuelHodge/agentic-builder-cli)](https://github.com/DSamuelHodge/agentic-builder-cli/blob/main/LICENSE)
 
@@ -108,7 +108,7 @@ restack-gen doctor
 | `--quiet` | `-q` | Suppress informational output | All commands |
 | `--verbose` | `-v` | Enable detailed logging and output | All commands |
 | `--yes` | `-y` | Automatically answer yes to all prompts | `generate` |
-| `--no-color` | | Disable ANSI color output | All commands |
+| `--interactive` | `-i` | Launch interactive mode for guided project creation | `new` |
 | `--help` | `-h` | Display command-specific help | All commands |
 ## Concurrent Project Generation
 
@@ -123,6 +123,53 @@ restack-gen --concurrent-new proj1 proj2 proj3 --lang py
 This will create `proj1`, `proj2`, and `proj3` concurrently in the current directory. If any project fails to generate, the CLI will clean up partial outputs and report errors.
 
 **Note:** You do not need to specify a command (like `new`) when using `--concurrent-new`.
+
+## Interactive Mode
+
+For an enhanced user experience, restack-gen supports an interactive mode that guides you through project creation with prompts and auto-completion.
+
+### Launching Interactive Mode
+
+```bash
+# Launch interactive mode
+restack-gen -i
+
+# Or specify interactive with new command
+restack-gen new -i
+```
+
+### Interactive Features
+
+- **Guided Setup**: Step-by-step prompts for project configuration
+- **Auto-completion**: Intelligent suggestions for languages, templates, and package managers
+- **Input Validation**: Real-time validation of project names and paths
+- **Context Awareness**: Remembers your preferences for future sessions
+- **Fallback Support**: Gracefully falls back to standard CLI if interactive features are unavailable
+
+### Example Interactive Session
+
+```
+$ restack-gen -i
+🚀 Welcome to restack-gen (interactive mode)
+
+What would you like to do? (new/help/exit) new
+
+Project name: my-interactive-app
+Language (py/ts): py
+Package manager (uv/pip/pnpm/npm): uv
+Output directory (/current/path): 
+
+Create project 'my-interactive-app'? (y/N) y
+
+✓ Created directory structure at /path/to/my-interactive-app
+✓ Created new Restack app: my-interactive-app
+```
+
+### Interactive Mode Requirements
+
+- **Terminal Support**: Requires a TTY for full interactive experience
+- **Optional Dependencies**: Enhanced features available with `prompt_toolkit` (auto-installs if missing)
+- **Fallback**: Automatically uses standard CLI mode in non-interactive environments (CI/CD, scripts)
 
 ## Configuration
 

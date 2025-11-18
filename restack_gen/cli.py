@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING
 from .commands import CommandRegistry
 from .constants import Config, Language
 from .utils.console import Color, print_error, print_info, print_success
-from .utils.ui_components import with_spinner, with_progress_bar
+from .utils.ui_components import with_progress_bar
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -32,7 +32,6 @@ class ExitCode(IntEnum):
     INTERRUPTED = 130
 
 
-
 class ConcurrentProjectCreator:
     """Handles concurrent creation of multiple projects."""
 
@@ -40,7 +39,9 @@ class ConcurrentProjectCreator:
         self.config = config
 
     @with_progress_bar(description="[cyan]Creating projects...")
-    def create_projects(self, project_names: 'Sequence[str]', *, progress, description: str) -> int:
+    def create_projects(
+        self, project_names: "Sequence[str]", *, progress, description: str
+    ) -> int:
         """Create multiple projects concurrently with a progress bar."""
         if not project_names:
             print_error("No project names provided for concurrent creation")
@@ -62,7 +63,9 @@ class ConcurrentProjectCreator:
                     result_name, exit_code = future.result()
                     results[result_name] = exit_code
                     status = "✓" if exit_code == ExitCode.SUCCESS else "✗"
-                    progress.update(task, advance=1, description=f"[cyan]Processing {name}")
+                    progress.update(
+                        task, advance=1, description=f"[cyan]Processing {name}"
+                    )
                     if not self.config.quiet:
                         print_info(f"{status} {result_name}")
                 except Exception as e:

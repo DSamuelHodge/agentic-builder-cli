@@ -1,9 +1,16 @@
 # ui_components.py
 from functools import wraps
-from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    BarColumn,
+    TextColumn,
+    TimeRemainingColumn,
+)
 
 # Import the shared console instance
 from .console import console
+
 
 def with_spinner(text: str):
     """
@@ -12,14 +19,18 @@ def with_spinner(text: str):
     Args:
         text (str): The text to display next to the spinner.
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             with console.status(f"[bold green]{text}", spinner="dots"):
                 result = func(*args, **kwargs)
             return result
+
         return wrapper
+
     return decorator
+
 
 def with_progress_bar(description: str):
     """
@@ -31,6 +42,7 @@ def with_progress_bar(description: str):
     Args:
         description (str): The initial description for the progress bar task.
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -43,9 +55,11 @@ def with_progress_bar(description: str):
                 console=console,
                 transient=True,
             ) as progress:
-                kwargs['progress'] = progress
-                kwargs['description'] = description
+                kwargs["progress"] = progress
+                kwargs["description"] = description
                 result = func(*args, **kwargs)
             return result
+
         return wrapper
+
     return decorator

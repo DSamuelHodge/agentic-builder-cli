@@ -4,7 +4,7 @@
 from pathlib import Path
 from .base import Command
 from ..constants import VERSION, Language
-from ..utils.console import Color, print_error, print_warning
+from ..utils.console import Color, print_error, print_warning, print_success
 
 
 class VersionCommand(Command):
@@ -69,6 +69,53 @@ class ListTemplatesCommand(Command):
         ]
 
 
+class TelemetryCommand(Command):
+    """Manage telemetry settings."""
+
+    def execute(self, args: list[str]) -> int:
+        if not args:
+            self._show_status()
+            return 0
+
+        subcommand = args[0].lower()
+        if subcommand == "enable":
+            self._enable_telemetry()
+        elif subcommand == "disable":
+            self._disable_telemetry()
+        else:
+            print_error(f"Unknown telemetry subcommand: {subcommand}")
+            print("Usage: restack-gen telemetry [enable|disable]")
+            return 1
+        return 0
+
+    def _show_status(self):
+        """Show current telemetry status."""
+        from ..utils.telemetry import get_collector
+
+        collector = get_collector()
+        status = "enabled" if collector.is_enabled() else "disabled"
+        print(f"Telemetry is currently {status}.")
+        print(
+            "Use 'restack-gen telemetry enable' or 'restack-gen telemetry disable' to change."
+        )
+
+    def _enable_telemetry(self):
+        """Enable telemetry."""
+        from ..utils.telemetry import get_collector
+
+        collector = get_collector()
+        collector.enable()
+        print_success("Telemetry enabled. Thank you for helping improve restack-gen!")
+
+    def _disable_telemetry(self):
+        """Disable telemetry."""
+        from ..utils.telemetry import get_collector
+
+        collector = get_collector()
+        collector.disable()
+        print_success("Telemetry disabled.")
+
+
 class HelpCommand(Command):
     """Show help information."""
 
@@ -82,6 +129,7 @@ class HelpCommand(Command):
 
 {Color.BOLD}USAGE:{Color.RESET}
   restack-gen <command> [options] [arguments]
+  restack-gen -i                           # Interactive mode
 
 {Color.BOLD}COMMANDS:{Color.RESET}
   {Color.CYAN}new{Color.RESET} <app_name>              Create a new Restack app
@@ -93,9 +141,11 @@ class HelpCommand(Command):
   {Color.CYAN}doctor{Color.RESET}                       Run environment diagnostics
   {Color.CYAN}list-templates{Color.RESET}               List available code templates
   {Color.CYAN}version{Color.RESET}                      Show version information
+  {Color.CYAN}telemetry{Color.RESET}                   Manage telemetry settings
   {Color.CYAN}help{Color.RESET}                         Show this help message
 
 {Color.BOLD}OPTIONS:{Color.RESET}
+  -i, --interactive            Launch interactive mode
   --lang <py|ts>               Language (auto-detect if omitted)
   --pm <uv|pip|pnpm|npm>       Package manager preference
   --cwd <path>                 Run in a custom directory
@@ -110,6 +160,10 @@ class HelpCommand(Command):
 {Color.BOLD}EXAMPLES:{Color.RESET}
   # Create a new app
   restack-gen new my-app --lang py
+
+  # Interactive mode for guided setup
+  restack-gen -i
+  restack-gen new -i
 
   # Generate components
   restack-gen g agent EmailHandler
