@@ -1,5 +1,4 @@
 # restack-gen
-# restack-gen
 
 [![CI](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/v/release/DSamuelHodge/agentic-builder-cli?sort=semver)](https://github.com/DSamuelHodge/agentic-builder-cli/releases)
