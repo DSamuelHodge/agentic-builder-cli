@@ -38,8 +38,8 @@ This checklist tracks completed work and outstanding items for the interactive C
 - [x] Additional tests
   - [x] Unit tests for validators, templates, context detection, fallback, and wizard basics (`tests/test_interactive_*.py`)
   - [x] E2E tests for full interactive session (`tests/e2e/test_interactive_flow.py`) mocking `prompt_toolkit.prompt`
-  - [ ] Integration tests verifying created project structure for both `py` and `ts`
-  - [ ] Performance tests for startup & import time
+  - [x] Integration tests verifying created project structure for both `py` and `ts`
+  - [x] Performance tests for startup & import time
 - [ ] Documentation & Release
   - [ ] README updated with interactive examples and `--interactive` usage
   - [ ] Add `help`/CLI docs changes to `src/restack_gen/commands/info.py` to include interactive section
