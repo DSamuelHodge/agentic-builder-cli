@@ -3,7 +3,7 @@
 [![CI](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/v/release/DSamuelHodge/agentic-builder-cli?sort=semver)](https://github.com/DSamuelHodge/agentic-builder-cli/releases)
 [![License](https://img.shields.io/github/license/DSamuelHodge/agentic-builder-cli)](https://github.com/DSamuelHodge/agentic-builder-cli/blob/main/LICENSE)
-
+ 
 
 A command-line interface tool for scaffolding opinionated Restack agent frameworks in Python and TypeScript. Provides comprehensive project generation, code templates, and development workflow management.
 
@@ -20,7 +20,7 @@ A command-line interface tool for scaffolding opinionated Restack agent framewor
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.10 - 3.12 (restack-ai requires 3.10-3.12; Python 3.13+ can fail building wheels)
 - uv package manager (recommended) or pip
 
 ### Install from Source
@@ -58,6 +58,11 @@ pip install restack-gen
 ```bash
 # Create a new Restack project
 restack-gen new my-agent-app
+
+# Recommended: use `uv venv` to create and activate a virtual environment first
+uv venv
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Unix/macOS
 
 # Generate multiple projects concurrently (NEW)
 restack-gen --concurrent-new proj1 proj2 proj3 --lang py
@@ -225,14 +230,17 @@ python -m pytest tests/test_cli.py
 ### Code Quality
 
 ```bash
-# Lint code
-python -m ruff check .
+# Lint code (run tools installed in the uv venv)
+uv run ruff check .
 
 # Format code
-python -m ruff format .
+uv run ruff format .
+# Security checks
+uv run pip-audit
+uv run bandit -r restack_gen
 
 # Type checking (future)
-# mypy restack_gen/
+# uv run mypy restack_gen/
 ```
 
 ### Building

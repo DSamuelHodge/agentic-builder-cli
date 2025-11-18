@@ -227,7 +227,8 @@ def test_show_next_steps(capsys):
     captured = capsys.readouterr()
     assert "Created new Restack app: testapp" in captured.out
     assert "cd testapp" in captured.out
-    assert "pip install -e .[dev]" in captured.out
+    assert "uv venv" in captured.out
+    assert "uv pip install -e .[dev]" in captured.out
     assert "restack-gen dev" in captured.out
 
 

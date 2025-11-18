@@ -3,24 +3,31 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
+
 name = "{{ project_name }}"
-version = "0.1.0"
+version = "0.3.0"
 description = "{{ description }}"
 authors = [
     {name = "Your Name", email = "your.email@example.com"},
 ]
 dependencies = [
-    "restack-ai>=0.0.115",
     "click>=8.0.0",
     "jinja2>=3.0.0",
+authors = [
+    "rich>=13.0.0"
 ]
+dependencies = [
 
 [project.optional-dependencies]
+interactive = ["prompt_toolkit>=3.0.0"]
 dev = [
+    "pytest>=7.0.0",
+requires-python = ">=3.10,<3.13"
+    "ruff>=0.1.0",
     "mypy>=1.0.0",
     "flake8>=4.0.0",
     "black>=22.0.0",
-    "pytest>=7.0.0",
+    "uv"
 ]
 
 [tool.mypy]
