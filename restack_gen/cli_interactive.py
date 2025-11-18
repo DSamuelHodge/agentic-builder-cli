@@ -64,7 +64,6 @@ class InteractiveCLI:
 
     def _use_prompt_toolkit(self) -> bool:
         try:
-
             return True
         except Exception:
             return False

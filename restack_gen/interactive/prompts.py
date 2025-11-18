@@ -32,7 +32,6 @@ class InteractivePrompter:
 
     def _has_prompt_toolkit(self) -> bool:
         try:
-
             return True
         except Exception:
             return False

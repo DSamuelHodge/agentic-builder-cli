@@ -6,6 +6,7 @@
 Decides whether to dispatch to the existing standard CLI or new
 interactive mode based on argv and tty presence.
 """
+
 from __future__ import annotations
 
 import sys
