@@ -1,6 +1,5 @@
 import sys
 from restack_gen import cli
-import pytest
 
 
 def test_create_parser_and_build_config():
@@ -94,7 +93,7 @@ def test_main_keyboard_interrupt(monkeypatch, capsys):
     monkeypatch.setattr("restack_gen.cli.CommandRegistry", DummyRegistry)
     result = cli.main()
     captured = capsys.readouterr()
-    out, err = captured.out, captured.err
+    _, err = captured.out, captured.err
     assert result == 130
     assert "Cancelled by user" in err
 
@@ -184,7 +183,9 @@ def test_configure_output_no_color():
 
 
 def test_main_concurrent_new_success(monkeypatch, capsys):
-    monkeypatch.setattr(sys, "argv", ["restack-gen", "--concurrent-new", "proj1", "proj2"])
+    monkeypatch.setattr(
+        sys, "argv", ["restack-gen", "--concurrent-new", "proj1", "proj2"]
+    )
 
     class DummyCreator:
         def __init__(self, config):
@@ -477,9 +478,13 @@ def test_cleanup_failed_project_verbose(monkeypatch, capsys, tmp_path):
     cmd = DummyCommand(config)
     # Mock shutil.rmtree to raise an exception
     import shutil
-    original_rmtree = shutil.rmtree
+
+    # Keep a reference to original rmtree if needed
+    _ = shutil.rmtree
+
     def mock_rmtree(path, ignore_errors=False):
         raise Exception("Mock cleanup error")
+
     monkeypatch.setattr(shutil, "rmtree", mock_rmtree)
 
     creator._cleanup_failed_project(cmd, "testproj")

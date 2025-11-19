@@ -1,4 +1,3 @@
-from types import SimpleNamespace
 import sys
 
 from restack_gen.commands.doctor import DoctorCommand
@@ -23,8 +22,6 @@ def test_uv_missing_warns(monkeypatch, capsys):
     cmd._check_uv()
     captured = capsys.readouterr()
     assert "uv not found" in captured.out
-from restack_gen.commands.doctor import DoctorCommand
-from restack_gen.constants import Config
 
 
 # --- DoctorCommand Coverage ---

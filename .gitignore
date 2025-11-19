@@ -82,6 +82,14 @@ Desktop.ini
 # Docs
 .docs/
 
+# Sensitive files
+.pypirc
+
 # Tests
-tests/
-.tests/
+# Tests are tracked in the repo - do not ignore the `tests/` folder
+*.pytest_cache/
+# Temporary CI / project generation
+ci_proj*
+
+
+uv.lock

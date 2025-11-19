@@ -24,7 +24,7 @@ dependencies = [
 
 [project.optional-dependencies]
 interactive = ["prompt_toolkit>=3.0.0"]
-dev = ["pytest>=7.0.0", "pytest-cov>=4.0.0", "ruff>=0.1.0", "uv"]
+dev = ["pytest>=7.0.0", "pytest-cov>=4.0.0", "ruff>=0.1.0", "uv", "pre-commit", "bump2version>=1.0.1"]
 
 [tool.pytest.ini_options]
 addopts = "-ra -q"

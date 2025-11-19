@@ -1,26 +1,29 @@
 import os
 import sys
-import types
 import pytest
-from unittest import mock
 
 import restack_gen.cli_interactive as cli_interactive
 
-@pytest.mark.skipif(os.environ.get("CI") == "true", reason="E2E interactive test skipped in CI")
+
+@pytest.mark.skipif(
+    os.environ.get("CI") == "true", reason="E2E interactive test skipped in CI"
+)
 def test_interactive_flow(monkeypatch, tmp_path):
     """
     E2E test for the interactive CLI session, mocking prompt_toolkit.prompt and input().
     Simulates a user creating a new project interactively.
     """
     # Simulate user answers for prompts (project name, language, template, etc.)
-    user_inputs = iter([
-        "new",             # Action: new
-        "my-e2e-project",   # Project name
-        "py",              # Language
-        "uv",              # Package manager
-        str(tmp_path),      # Output directory
-        "y"                # Confirm
-    ])
+    user_inputs = iter(
+        [
+            "new",  # Action: new
+            "my-e2e-project",  # Project name
+            "py",  # Language
+            "uv",  # Package manager
+            str(tmp_path),  # Output directory
+            "y",  # Confirm
+        ]
+    )
 
     def fake_prompt(*args, **kwargs):
         return next(user_inputs)

@@ -1,0 +1,40 @@
+name: Create CHANGELOG PR
+
+# Create a PR that adds the released notes to CHANGELOG.md when a release is published.
+on:
+  release:
+    types: [published]
+
+jobs:
+  create-changelog-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get release info
+        id: release_info
+        run: |
+          echo "RELEASE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "RELEASE_BODY<<EOF" >> $GITHUB_OUTPUT
+          echo "${{ github.event.release.body }}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: Prepend release notes to CHANGELOG.md
+        run: |
+          RELEASE_TAG=${{ steps.release_info.outputs.RELEASE_TAG }}
+          RELEASE_BODY=${{ steps.release_info.outputs.RELEASE_BODY }}
+          DATE=$(date -u +"%Y-%m-%d")
+          printf "## [%s] - %s\n\n%s\n\n" "$RELEASE_TAG" "$DATE" "$RELEASE_BODY" > /tmp/new_entry.md
+          cat CHANGELOG.md >> /tmp/new_entry.md || true
+          mv /tmp/new_entry.md CHANGELOG.md
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "chore(release): add changelog entry for $RELEASE_TAG" || echo "No changes"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(release): add changelog entry for $RELEASE_TAG"
+          branch: "changelog/update-$RELEASE_TAG"
+          title: "chore(release): add changelog entry for $RELEASE_TAG"
+          body: |
+            This PR contains the auto-generated changelog entry for release $RELEASE_TAG.

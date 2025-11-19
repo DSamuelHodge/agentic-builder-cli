@@ -1,6 +1,4 @@
-import os
 import pytest
-from pathlib import Path
 
 from restack_gen.commands.new import NewCommand
 from restack_gen.constants import Config, Language
@@ -40,8 +38,12 @@ def test_project_structure_creation(lang, tmp_path):
         assert (project_dir / "tests").exists()
         # Check for sample files
         assert any((project_dir / "src/agents").iterdir())  # At least one agent file
-        assert any((project_dir / "src/functions").iterdir())  # At least one function file
-        assert any((project_dir / "src/workflows").iterdir())  # At least one workflow file
+        assert any(
+            (project_dir / "src/functions").iterdir()
+        )  # At least one function file
+        assert any(
+            (project_dir / "src/workflows").iterdir()
+        )  # At least one workflow file
 
     elif lang == Language.TYPESCRIPT:
         # TypeScript-specific checks
@@ -52,5 +54,9 @@ def test_project_structure_creation(lang, tmp_path):
         assert (project_dir / "src/workflows").exists()
         # Check for sample files
         assert any((project_dir / "src/agents").iterdir())  # At least one agent file
-        assert any((project_dir / "src/functions").iterdir())  # At least one function file
-        assert any((project_dir / "src/workflows").iterdir())  # At least one workflow file
+        assert any(
+            (project_dir / "src/functions").iterdir()
+        )  # At least one function file
+        assert any(
+            (project_dir / "src/workflows").iterdir()
+        )  # At least one workflow file

@@ -3,7 +3,6 @@ from restack_gen.commands.dev import DevCommand
 from restack_gen.constants import Config
 import sys
 import subprocess
-from pathlib import Path
 
 
 def test_dev_command_script_not_found(tmp_path, capsys):
@@ -48,7 +47,7 @@ def test_dev_command_windows_bat_script(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "platform", "win32")
 
     # Mock subprocess.run to return success
-    mock_result = type('MockResult', (), {'returncode': 0})()
+    mock_result = type("MockResult", (), {"returncode": 0})()
     monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: mock_result)
 
     result = cmd.execute([])
@@ -71,10 +70,13 @@ def test_dev_command_windows_sh_script_with_bash(tmp_path, monkeypatch):
 
     # Mock shutil.which to return bash path
     import shutil
-    monkeypatch.setattr(shutil, "which", lambda cmd: "/usr/bin/bash" if cmd == "bash" else None)
+
+    monkeypatch.setattr(
+        shutil, "which", lambda cmd: "/usr/bin/bash" if cmd == "bash" else None
+    )
 
     # Mock subprocess.run to return success
-    mock_result = type('MockResult', (), {'returncode': 0})()
+    mock_result = type("MockResult", (), {"returncode": 0})()
     monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: mock_result)
 
     result = cmd.execute([])
@@ -97,6 +99,7 @@ def test_dev_command_windows_sh_script_no_bash(tmp_path, monkeypatch, capsys):
 
     # Mock shutil.which to return None (no bash)
     import shutil
+
     monkeypatch.setattr(shutil, "which", lambda cmd: None)
 
     result = cmd.execute([])
@@ -120,7 +123,7 @@ def test_dev_command_unix_script(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "platform", "linux")
 
     # Mock subprocess.run to return success
-    mock_result = type('MockResult', (), {'returncode': 0})()
+    mock_result = type("MockResult", (), {"returncode": 0})()
     monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: mock_result)
 
     result = cmd.execute([])
@@ -142,7 +145,7 @@ def test_dev_command_script_execution_failure(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "platform", "linux")
 
     # Mock subprocess.run to return failure
-    mock_result = type('MockResult', (), {'returncode': 1})()
+    mock_result = type("MockResult", (), {"returncode": 1})()
     monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: mock_result)
 
     result = cmd.execute([])
@@ -164,7 +167,11 @@ def test_dev_command_exception_handling(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(sys, "platform", "linux")
 
     # Mock subprocess.run to raise exception
-    monkeypatch.setattr(subprocess, "run", lambda *args, **kwargs: (_ for _ in ()).throw(Exception("subprocess error")))
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        lambda *args, **kwargs: (_ for _ in ()).throw(Exception("subprocess error")),
+    )
 
     result = cmd.execute([])
     assert result == 1
@@ -190,9 +197,10 @@ def test_dev_command_prefers_bat_on_windows(tmp_path, monkeypatch):
 
     # Mock subprocess.run to capture what was called
     called_with = []
+
     def mock_run(cmd_args, **kwargs):
         called_with.extend(cmd_args)
-        result = type('MockResult', (), {'returncode': 0})()
+        result = type("MockResult", (), {"returncode": 0})()
         return result
 
     monkeypatch.setattr(subprocess, "run", mock_run)
@@ -219,13 +227,17 @@ def test_dev_command_falls_back_to_sh_on_windows(tmp_path, monkeypatch):
 
     # Mock shutil.which to return bash path
     import shutil
-    monkeypatch.setattr(shutil, "which", lambda cmd: "/usr/bin/bash" if cmd == "bash" else None)
+
+    monkeypatch.setattr(
+        shutil, "which", lambda cmd: "/usr/bin/bash" if cmd == "bash" else None
+    )
 
     # Mock subprocess.run to capture what was called
     called_with = []
+
     def mock_run(cmd_args, **kwargs):
         called_with.extend(cmd_args)
-        result = type('MockResult', (), {'returncode': 0})()
+        result = type("MockResult", (), {"returncode": 0})()
         return result
 
     monkeypatch.setattr(subprocess, "run", mock_run)
