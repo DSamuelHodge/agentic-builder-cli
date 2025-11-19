@@ -82,6 +82,8 @@ class TelemetryCommand(Command):
             self._enable_telemetry()
         elif subcommand == "disable":
             self._disable_telemetry()
+        elif subcommand in ("status", "show"):
+            self._show_status()
         else:
             print_error(f"Unknown telemetry subcommand: {subcommand}")
             print("Usage: restack-gen telemetry [enable|disable]")
@@ -158,14 +160,15 @@ class HelpCommand(Command):
   -h, --help                   Show this help message
 
 {Color.BOLD}EXAMPLES:{Color.RESET}
-  # Create a new app
-  restack-gen new my-app --lang py
+    # Create a new app
+    restack-gen new my-app --lang py
+    restack-gen new my-app --lang py --pm uv --force  # Create without prompts, force override
 
   # Interactive mode for guided setup
   restack-gen -i
   restack-gen new -i
 
-  # Generate components
+    # Generate components
   restack-gen g agent EmailHandler
   restack-gen g function send_email
   restack-gen g workflow email_campaign
@@ -175,8 +178,14 @@ class HelpCommand(Command):
   restack-gen test            # Run tests
   restack-gen dev             # Start dev server
 
-  # Dry run mode
-  restack-gen g agent TestAgent --dry-run
+    # Dry run mode
+    restack-gen g agent TestAgent --dry-run
+    restack-gen g agent TestAgent --dry-run --lang py --force
+
+    # Telemetry
+    restack-gen telemetry status           # Report telemetry opt-in state
+    restack-gen telemetry enable           # Opt in to telemetry
+    restack-gen telemetry disable          # Opt out of telemetry
 
 {Color.BOLD}DOCUMENTATION:{Color.RESET}
   https://docs.restack.io
