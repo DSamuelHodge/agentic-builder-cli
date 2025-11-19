@@ -1,0 +1,6 @@
+# Example .pypirc - DO NOT store tokens in a repository. This is for local usage only.
+# Save to $HOME/.pypirc (not in the project workspace), or use the env-based token and set TWINE_PASSWORD.
+
+[pypi]
+username = __token__
+password = your-pypi-token-here

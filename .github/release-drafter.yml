@@ -1,0 +1,19 @@
+name-template: 'v$NEXT_PATCH_VERSION - $SHORT_COMMIT'
+tag-template: 'v$NEXT_PATCH_VERSION'
+categories:
+  - title: 'Added'
+    labels:
+      - 'enhancement'
+      - 'feature'
+  - title: 'Changed'
+    labels:
+      - 'changed'
+      - 'refactor'
+  - title: 'Fixed'
+    labels:
+      - 'bugfix'
+      - 'fix'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+template: |
+  ## What's Changed
+  $CHANGES

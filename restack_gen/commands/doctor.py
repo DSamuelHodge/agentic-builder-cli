@@ -4,6 +4,8 @@
 import subprocess
 import sys
 import os
+import shutil
+from importlib import metadata as importlib_metadata
 from .base import Command
 from ..utils.console import Color, print_success, print_warning, print_info
 from ..utils.toml import TOMLLoader
@@ -17,6 +19,7 @@ class DoctorCommand(Command):
         self._check_docker()
         self._check_python()
         self._check_packages()
+        self._check_uv()
         self._check_toml_support()
         self._check_environment()
         return 0
@@ -31,8 +34,18 @@ class DoctorCommand(Command):
 
     def _check_python(self):
         """Check Python version."""
-        version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+        # support sys.version_info tuples and objects with .major/.minor attributes
+        maj = getattr(sys.version_info, "major", sys.version_info[0])
+        minr = getattr(sys.version_info, "minor", sys.version_info[1])
+        micro = getattr(sys.version_info, "micro", sys.version_info[2])
+        version = f"{maj}.{minr}.{micro}"
         print_info(f"Python version: {version}")
+        # Check supported Python range (restack-ai supports 3.10-3.12)
+        if (maj, minr) < (3, 10) or (maj, minr) >= (3, 13):
+            print_warning(
+                "Python version outside supported range (recommended: 3.10-3.12). "
+                "Some packages (like restack_ai) may not build on 3.13+ or work on <3.10"
+            )
 
     def _check_packages(self):
         """Check required packages."""
@@ -43,6 +56,14 @@ class DoctorCommand(Command):
                 print_success(f"{pkg} installed")
             except ImportError:
                 print_warning(f"{pkg} not installed")
+
+        # Check restack_ai version and compatibility
+        try:
+            version = importlib_metadata.version("restack_ai")
+            print_info(f"restack_ai version: {version}")
+        except importlib_metadata.PackageNotFoundError:
+            # Already warned above
+            pass
 
     def _check_toml_support(self):
         """Check TOML support."""
@@ -58,3 +79,13 @@ class DoctorCommand(Command):
         print(f"  RESTACK_HOST: {restack_host}")
         print(f"\n{Color.BOLD}Services:{Color.RESET}")
         print(f"  Dev UI: {restack_host}")
+
+    def _check_uv(self):
+        """Check whether `uv` (venv helper) is available."""
+        uv_path = shutil.which("uv")
+        if uv_path:
+            print_success(f"uv found at: {uv_path}")
+        else:
+            print_warning(
+                "uv not found (recommended: install uv to create virtualenvs)."
+            )

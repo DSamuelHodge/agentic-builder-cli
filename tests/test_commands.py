@@ -39,7 +39,8 @@ def test_routes_command_print_section(capsys, tmp_path):
     cmd = RoutesCommand(Config(cwd=tmp_path))
     # Create service.py with registered components
     service_py = tmp_path / "service.py"
-    service_py.write_text("""
+    service_py.write_text(
+        """
 from restack_ai import Restack
 
 client = Restack()
@@ -50,7 +51,8 @@ async def main():
         workflows=[WorkflowTest],
         functions=[function_test]
     )
-""")
+"""
+    )
     # Should print all sections
     cmd.execute([])
     out = capsys.readouterr().out

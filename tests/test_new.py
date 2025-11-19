@@ -1,9 +1,6 @@
 from restack_gen.commands.new import NewCommand
 from restack_gen.constants import Config, Language
-import pytest
 from pathlib import Path
-import tempfile
-import shutil
 
 
 def test_new_command_valid(monkeypatch, tmp_path):
@@ -51,7 +48,11 @@ def test_new_command_create_app_error(monkeypatch, tmp_path):
     config = Config()
     config.cwd = tmp_path
     cmd = NewCommand(config)
-    monkeypatch.setattr(cmd, "_create_app", lambda name, dir: (_ for _ in ()).throw(Exception("test error")))
+    monkeypatch.setattr(
+        cmd,
+        "_create_app",
+        lambda name, dir: (_ for _ in ()).throw(Exception("test error")),
+    )
     assert cmd.execute(["myapp"]) == 1
 
 
@@ -60,7 +61,11 @@ def test_new_command_create_app_error_verbose(monkeypatch, tmp_path, capsys):
     config.cwd = tmp_path
     config.verbose = True
     cmd = NewCommand(config)
-    monkeypatch.setattr(cmd, "_create_app", lambda name, dir: (_ for _ in ()).throw(Exception("test error")))
+    monkeypatch.setattr(
+        cmd,
+        "_create_app",
+        lambda name, dir: (_ for _ in ()).throw(Exception("test error")),
+    )
     result = cmd.execute(["myapp"])
     assert result == 1
     captured = capsys.readouterr()
@@ -70,13 +75,13 @@ def test_new_command_create_app_error_verbose(monkeypatch, tmp_path, capsys):
 def test_validate_app_name_valid():
     config = Config()
     cmd = NewCommand(config)
-    assert cmd._validate_app_name("valid_app") == True
+    assert cmd._validate_app_name("valid_app")
 
 
 def test_validate_app_name_invalid():
     config = Config()
     cmd = NewCommand(config)
-    assert cmd._validate_app_name("invalid app") == False
+    assert not cmd._validate_app_name("invalid app")
 
 
 def test_get_app_directory(tmp_path):
@@ -141,7 +146,7 @@ def test_extract_toml_values():
     data = {
         "timeouts": {"start_to_close": 30},
         "retry_policies": {"max_attempts": 3},
-        "queues": {"default": "myqueue"}
+        "queues": {"default": "myqueue"},
     }
     result = cmd._extract_toml_values(data)
     assert "timeouts_start_to_close_seconds" in result
@@ -164,6 +169,7 @@ def test_generate_samples(tmp_path):
     cmd = NewCommand(config)
     from restack_gen.core.project import ProjectStructure
     from restack_gen.core.templates import TemplateEngine
+
     project = ProjectStructure(tmp_path / "testapp")
     project.ensure_structure()
     templates_root = Path(__file__).parent.parent / "templates"
@@ -175,9 +181,15 @@ def test_generate_samples(tmp_path):
     agents_dir = project.get_subdir("agents")
     functions_dir = project.get_subdir("functions")
     workflows_dir = project.get_subdir("workflows")
-    assert (agents_dir / "testapp.py").exists() or not engine.template_exists("agent.py.j2")
-    assert (functions_dir / "llm_chat.py").exists() or not engine.template_exists("function.py.j2")
-    assert (workflows_dir / "automated_workflow.py").exists() or not engine.template_exists("workflow.py.j2")
+    assert (agents_dir / "testapp.py").exists() or not engine.template_exists(
+        "agent.py.j2"
+    )
+    assert (functions_dir / "llm_chat.py").exists() or not engine.template_exists(
+        "function.py.j2"
+    )
+    assert (
+        workflows_dir / "automated_workflow.py"
+    ).exists() or not engine.template_exists("workflow.py.j2")
 
 
 def test_generate_test_sample(tmp_path):
@@ -185,6 +197,7 @@ def test_generate_test_sample(tmp_path):
     cmd = NewCommand(config)
     from restack_gen.core.project import ProjectStructure
     from restack_gen.core.templates import TemplateEngine
+
     project = ProjectStructure(tmp_path / "testapp")
     project.ensure_structure()
     templates_root = Path(__file__).parent.parent / "templates"
@@ -227,7 +240,8 @@ def test_show_next_steps(capsys):
     captured = capsys.readouterr()
     assert "Created new Restack app: testapp" in captured.out
     assert "cd testapp" in captured.out
-    assert "pip install -e .[dev]" in captured.out
+    assert "uv venv" in captured.out
+    assert "uv pip install -e .[dev]" in captured.out
     assert "restack-gen dev" in captured.out
 
 
@@ -252,7 +266,13 @@ def test_setup_templates_missing_lang_dir(monkeypatch, tmp_path):
     app_name = "testapp"
     app_dir = tmp_path / app_name
     # Mock template_dir.exists() to return False
-    monkeypatch.setattr(Path, "exists", lambda self: False if "templates" in str(self) and self.name in ["py", "ts"] else True)
+    monkeypatch.setattr(
+        Path,
+        "exists",
+        lambda self: (
+            False if "templates" in str(self) and self.name in ["py", "ts"] else True
+        ),
+    )
     engine, toml_values = cmd._setup_templates(app_name, app_dir, Language.PYTHON)
     assert engine is not None
     assert isinstance(toml_values, dict)
@@ -281,7 +301,7 @@ def test_extract_toml_values_string_timeout():
     data = {
         "timeouts": {"start_to_close": "30s"},
         "retry_policies": {"max_attempts": 3},
-        "queues": {"default": "myqueue"}
+        "queues": {"default": "myqueue"},
     }
     result = cmd._extract_toml_values(data)
     assert result["timeouts_start_to_close"] == "30s"
@@ -294,6 +314,7 @@ def test_create_readme_fallback(tmp_path, monkeypatch):
     app_dir.mkdir()
     # Mock engine.template_exists to return False
     from restack_gen.core.templates import TemplateEngine
+
     monkeypatch.setattr(TemplateEngine, "template_exists", lambda self, name: False)
     cmd._create_readme(app_dir, "testapp")
     readme_path = app_dir / "README.md"
@@ -308,6 +329,7 @@ def test_generate_samples_exception_handling(tmp_path, monkeypatch):
     cmd = NewCommand(config)
     from restack_gen.core.project import ProjectStructure
     from restack_gen.core.templates import TemplateEngine
+
     project = ProjectStructure(tmp_path / "testapp")
     project.ensure_structure()
     templates_root = Path(__file__).parent.parent / "templates"
@@ -315,7 +337,13 @@ def test_generate_samples_exception_handling(tmp_path, monkeypatch):
     engine = TemplateEngine(template_dir)
     toml_values = {}
     # Mock engine.render to raise exception
-    monkeypatch.setattr(TemplateEngine, "render", lambda self, template, context: (_ for _ in ()).throw(Exception("render error")))
+    monkeypatch.setattr(
+        TemplateEngine,
+        "render",
+        lambda self, template, context: (_ for _ in ()).throw(
+            Exception("render error")
+        ),
+    )
     # Should not raise, just log warning
     cmd._generate_samples(engine, project, "testapp", Language.PYTHON, toml_values)
 
@@ -325,6 +353,7 @@ def test_generate_test_sample_exception_handling(tmp_path, monkeypatch):
     cmd = NewCommand(config)
     from restack_gen.core.project import ProjectStructure
     from restack_gen.core.templates import TemplateEngine
+
     project = ProjectStructure(tmp_path / "testapp")
     project.ensure_structure()
     templates_root = Path(__file__).parent.parent / "templates"
@@ -332,7 +361,13 @@ def test_generate_test_sample_exception_handling(tmp_path, monkeypatch):
     engine = TemplateEngine(template_dir)
     toml_values = {}
     # Mock engine.render to raise exception
-    monkeypatch.setattr(TemplateEngine, "render", lambda self, template, context: (_ for _ in ()).throw(Exception("render error")))
+    monkeypatch.setattr(
+        TemplateEngine,
+        "render",
+        lambda self, template, context: (_ for _ in ()).throw(
+            Exception("render error")
+        ),
+    )
     # Should not raise, just log warning
     cmd._generate_test_sample(engine, project, "testapp", Language.PYTHON, toml_values)
 
@@ -343,7 +378,11 @@ def test_create_run_script_chmod_exception(tmp_path, monkeypatch):
     scripts_dir = tmp_path / "scripts"
     scripts_dir.mkdir()
     # Mock chmod to raise exception
-    monkeypatch.setattr(Path, "chmod", lambda self, mode: (_ for _ in ()).throw(Exception("chmod error")))
+    monkeypatch.setattr(
+        Path,
+        "chmod",
+        lambda self, mode: (_ for _ in ()).throw(Exception("chmod error")),
+    )
     # Should not raise
     cmd._create_run_script(scripts_dir)
     script_file = scripts_dir / "run_engine.sh"
@@ -354,11 +393,13 @@ def test_execute_cleanup_on_error(monkeypatch, tmp_path):
     config = Config()
     config.cwd = tmp_path
     cmd = NewCommand(config)
+
     # Mock _create_app to raise exception and check cleanup
     def mock_create_app(name, dir):
         # Create some files first
         (dir / "some_file.txt").write_text("test")
         raise Exception("test error")
+
     monkeypatch.setattr(cmd, "_create_app", mock_create_app)
     result = cmd.execute(["myapp"])
     assert result == 1

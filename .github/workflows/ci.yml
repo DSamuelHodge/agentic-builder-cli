@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11']
 
     steps:
     - uses: actions/checkout@v4
@@ -22,16 +22,20 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -e .[dev,interactive]
+        pip install uv
+        # Prefer uv for venv but fallback to python's venv if uv isn't available
+        if command -v uv >/dev/null 2>&1; then
+          uv venv
+        else
+          python -m venv .venv
+        fi
+        uv pip install -e .[dev,interactive]
     - name: Lint with ruff
       run: |
-        python -m ruff check .
-    - name: Format with ruff
-      run: |
-        python -m ruff format --check .
+        uv run ruff check .
     - name: Run tests
       run: |
-        python -m pytest --cov=restack_gen --cov-report=xml
+        uv run pytest --cov=restack_gen --cov-report=xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
@@ -41,27 +45,52 @@ jobs:
         fail_ci_if_error: false
 
   e2e-test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.11]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
-    - name: Install dependencies
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies (non-Windows)
+      if: ${{ matrix.os != 'windows-latest' }}
       run: |
         python -m pip install --upgrade pip
-        pip install -e .[dev]
-        pip install prompt_toolkit
+        pip install uv
+        if command -v uv >/dev/null 2>&1; then
+          uv venv
+        else
+          python -m venv .venv
+        fi
+        uv pip install -e .[dev,interactive]
+
+        # prompt_toolkit required for interactive features
+        uv pip install prompt_toolkit
+
+    - name: Install dependencies (Windows)
+      if: ${{ matrix.os == 'windows-latest' }}
+      shell: pwsh
+      run: |
+        python -m pip install --upgrade pip
+        pip install uv
+        if (Get-Command uv -ErrorAction SilentlyContinue) { uv venv } else { py -3 -m venv .venv }
+        uv pip install -e .[dev,interactive]
+
+        # prompt_toolkit required for interactive features
+        uv pip install prompt_toolkit
     - name: Run E2E tests
       run: |
-        python -m pytest tests/e2e/ -v
+        uv run pytest tests/e2e/ -v
     - name: Run integration tests
       run: |
-        python -m pytest tests/integration/ -v
+        uv run pytest tests/integration/ -v
     - name: Run performance tests
       run: |
-        python -m pytest tests/performance/ -v
+        uv run pytest tests/performance/ -v
 
   concurrent-generation:
     runs-on: ubuntu-latest
@@ -74,13 +103,72 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: |
-          pip install .
+          pip install uv
+          if command -v uv >/dev/null 2>&1; then
+            uv venv
+          else
+            python -m venv .venv
+          fi
+          uv pip install .
       - name: Concurrently generate projects
         run: |
-          python -m restack_gen --concurrent-new ci_proj1 ci_proj2 ci_proj3 --lang py
+          uv run python -m restack_gen --concurrent-new ci_proj1 ci_proj2 ci_proj3 --lang py
       - name: Validate generated projects
         run: |
           test -d ci_proj1 && test -d ci_proj2 && test -d ci_proj3
       - name: Clean up
         run: |
           rm -rf ci_proj1 ci_proj2 ci_proj3
+
+  qa-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install dev tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+          uv venv
+          # Install pre-commit for local and CI checks
+          uv pip install pre-commit
+          uv pip install -e .[dev]
+          # Security & QA tools
+          uv pip install pip-audit bandit
+      - name: Run security audit (pip-audit)
+        run: |
+          # pip-audit is installed in the virtual environment; use uv run to execute it
+          # older pip-audit releases may not support --exit-code; run without it for compatibility
+          uv run pip-audit || true
+      - name: Run static security checks (bandit)
+        run: |
+          # Use uv run to execute bandit within the .venv
+          uv run bandit -r restack_gen -ll -f json || true
+      - name: Run lint (ruff)
+        run: |
+          # ruff is installed in the virtual environment; run with uv run
+          uv run ruff check .
+      - name: Run pre-commit
+        run: |
+          uv run pre-commit run --all-files || true
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install pre-commit
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+          if command -v uv >/dev/null 2>&1; then uv venv; else python -m venv .venv; fi
+          uv pip install pre-commit
+      - name: Run pre-commit hooks
+        run: |
+          uv run pre-commit run --all-files

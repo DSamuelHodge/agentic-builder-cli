@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install build tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+          python -m pip install bump2version
+      - name: Build distribution
+        run: |
+          python -m build
+      - name: Check changelog for version
+        run: |
+          # Get version string from the tag (strip leading 'v')
+          VERSION=${GITHUB_REF#refs/tags/v}
+          python tools/check_changelog.py "$VERSION"
+
+      - name: Optional bump2version (verify) # does not push tags, just ensures bump2version is available
+        run: |
+          echo "Validating bump2version is installed"
+          python -c "import bump2version; print('bump2version ready')"
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          python -m twine upload dist/*

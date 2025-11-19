@@ -3,7 +3,7 @@
 [![CI](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/DSamuelHodge/agentic-builder-cli/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/v/release/DSamuelHodge/agentic-builder-cli?sort=semver)](https://github.com/DSamuelHodge/agentic-builder-cli/releases)
 [![License](https://img.shields.io/github/license/DSamuelHodge/agentic-builder-cli)](https://github.com/DSamuelHodge/agentic-builder-cli/blob/main/LICENSE)
-
+ 
 
 A command-line interface tool for scaffolding opinionated Restack agent frameworks in Python and TypeScript. Provides comprehensive project generation, code templates, and development workflow management.
 
@@ -20,7 +20,7 @@ A command-line interface tool for scaffolding opinionated Restack agent framewor
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.10 - 3.12 (restack-ai requires 3.10-3.12; Python 3.13+ can fail building wheels)
 - uv package manager (recommended) or pip
 
 ### Install from Source
@@ -58,6 +58,11 @@ pip install restack-gen
 ```bash
 # Create a new Restack project
 restack-gen new my-agent-app
+
+# Recommended: use `uv venv` to create and activate a virtual environment first
+uv venv
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Unix/macOS
 
 # Generate multiple projects concurrently (NEW)
 restack-gen --concurrent-new proj1 proj2 proj3 --lang py
@@ -213,26 +218,29 @@ Templates use Jinja2 syntax with predefined context variables:
 
 ```bash
 # Run complete test suite
-python -m pytest
+uv run pytest
 
 # Run with coverage
-python -m pytest --cov=restack_gen --cov-report=html
+uv run pytest --cov=restack_gen --cov-report=html
 
 # Run specific test file
-python -m pytest tests/test_cli.py
+uv run pytest tests/test_cli.py
 ```
 
 ### Code Quality
 
 ```bash
-# Lint code
-python -m ruff check .
+# Lint code (run tools installed in the uv venv)
+uv run ruff check .
 
 # Format code
-python -m ruff format .
+uv run ruff format .
+# Security checks
+uv run pip-audit
+uv run bandit -r restack_gen
 
 # Type checking (future)
-# mypy restack_gen/
+# uv run mypy restack_gen/
 ```
 
 ### Building
@@ -267,17 +275,50 @@ uv pip install -e .
 ## Roadmap
 
 ### Version 0.3.0 (Q1 2026)
-- [ ] Multi-language template expansion (Go, Rust)
-- [ ] Plugin system for custom generators
-- [ ] Interactive mode with guided project creation
-- [ ] Template marketplace integration
 
-### Version 0.4.0 (Q2 2026)
+Release automation & changelog:
+
+- Automated changelog check: the release pipeline will verify `CHANGELOG.md` contains an entry for the tag being pushed and will fail the publish if not present. If you use `CHANGELOG.md` entries, make sure to add an entry for the new release (e.g., `## [0.3.0] - 2025-11-18`).
+- Use `bump2version` locally to bump versions in `pyproject.toml`. We provide `.bumpversion.cfg` configured to update `pyproject.toml`.
+
+Local bump2version example:
+
+```
+# Bump a patch version and update pyproject.toml
+uv pip install bump2version
+uv run bump2version patch
+```
+
+Automated ChangeLog Drafts
+--------------------------
+
+This repo uses Release Drafter to draft release notes automatically when pull requests are merged.
+
+- `.github/release-drafter.yml` has rules that group PRs into categories and populate a draft release on GitHub.
+- A workflow `.github/workflows/create-changelog-pr.yml` listens for published releases and opens a Pull Request that appends the release notes to `CHANGELOG.md` so maintainers can edit before merging.
+
+If you prefer to manage changelogs manually, you can ignore the auto-draft PRs, but they provide a good starting point for release notes.
+
+Local PyPI publishing (twine and `.pypirc`):
+
+1. Create `~/.pypirc` with the following contents (DO NOT commit to your repo):
+
+```
+[pypi]
+username = __token__
+password = <your-token-here>
+```
+
+2. Or use environment variables when uploading with Twine:
+
+```
+export TWINE_USERNAME=__token__
+export TWINE_PASSWORD=$PYPI_API_TOKEN
+python -m twine upload dist/*
+```
+
+3. For CI use: add `PYPI_API_TOKEN` to GitHub repository `Settings -> Secrets`, and release workflow will use that secret to publish.
 - [ ] Cloud deployment templates (AWS Lambda, Google Cloud Functions)
-- [ ] Advanced workflow patterns and templates
-- [ ] Performance optimization and caching
-- [ ] Shell completion scripts (bash, zsh, fish, PowerShell)
-
 ### Version 0.5.0 (Q3 2026)
 - [ ] AI-powered code suggestions and refactoring
 - [ ] Multi-framework support (FastAPI, Express.js integration)
@@ -303,13 +344,22 @@ uv pip install -e .
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
 3. Install development dependencies: `uv pip install -e ".[dev]"`
-4. Run tests: `python -m pytest`
-5. Ensure code quality: `python -m ruff check . && python -m ruff format .`
+4. Install pre-commit hooks locally (recommended):
+```
+uv pip install pre-commit
+uv run pre-commit install
+```
+4. Run tests: `uv run pytest`
+5. Ensure code quality: `uv run ruff check . && uv run ruff format .`
+6. Install and run pre-commit hooks (recommended):
+	- `uv pip install pre-commit`
+	- `uv run pre-commit install`
+	- `uv run pre-commit run --all-files`
 6. Submit a pull request
 
 ### Code Standards
 
-- **Python Version**: 3.8+ compatibility
+- **Python Version**: 3.10+ compatibility
 - **Code Style**: Black formatting with 88-character line length
 - **Linting**: Ruff for fast, comprehensive code quality
 - **Testing**: pytest with minimum 90% coverage requirement

@@ -60,21 +60,40 @@ class TemplateSelector:
             wc = WordCompleter(
                 list(choices.keys()), meta_dict=choices, ignore_case=True
             )
-            from prompt_toolkit import prompt
+            try:
+                from prompt_toolkit import prompt
+            except Exception:  # pragma: no cover - rare import failure
+                prompt = None
 
-            while True:
-                result = (
-                    prompt(
-                        "Select template: ", completer=wc, complete_while_typing=True
+            if prompt is not None:
+                while True:
+                    result = (
+                        prompt(
+                            "Select template: ",
+                            completer=wc,
+                            complete_while_typing=True,
+                        )
+                        .strip()
+                        .lower()
                     )
-                    .strip()
-                    .lower()
-                )
+                    if result in self.templates:
+                        return self.templates[result]
+                    print("Choose a valid template")
+            else:
+                # If prompt_toolkit can't be imported, fall back to simple input
+                print("Available templates:")
+                for t in available:
+                    print(f"  {t.id} - {t.name}: {t.description}")
+                while True:
+                    result = input("Select template: ").strip().lower()
+                    if result in self.templates:
+                        return self.templates[result]
+                    print("Invalid choice; try again")
                 if result in self.templates:
                     return self.templates[result]
                 print("Choose a valid template")
         else:
-            # Fallback: print choices and ask simple input
+            # Existing fallback already handles missing WordCompleter
             print("Available templates:")
             for t in available:
                 print(f"  {t.id} - {t.name}: {t.description}")

@@ -72,7 +72,8 @@ def test_generate_setup_engine_missing_templates():
     cmd = GenerateCommand(Config())
     # Mock the template_dir.exists() to return False
     import unittest.mock
-    with unittest.mock.patch('pathlib.Path.exists', return_value=False):
+
+    with unittest.mock.patch("pathlib.Path.exists", return_value=False):
         with pytest.raises(FileNotFoundError):
             cmd._setup_engine(Language.PYTHON)
 
@@ -80,19 +81,26 @@ def test_generate_setup_engine_missing_templates():
 def test_generate_get_output_path(tmp_path):
     cmd = GenerateCommand(Config())
     from restack_gen.core.project import ProjectStructure
+
     project = ProjectStructure(tmp_path)
     project.ensure_structure()
 
     # Test agent
-    path = cmd._get_output_path(project, GenerationType.AGENT, "MyAgent", Language.PYTHON)
+    path = cmd._get_output_path(
+        project, GenerationType.AGENT, "MyAgent", Language.PYTHON
+    )
     assert path == project.get_subdir("agents") / "my_agent.py"
 
     # Test function
-    path = cmd._get_output_path(project, GenerationType.FUNCTION, "myFunction", Language.PYTHON)
+    path = cmd._get_output_path(
+        project, GenerationType.FUNCTION, "myFunction", Language.PYTHON
+    )
     assert path == project.get_subdir("functions") / "my_function.py"
 
     # Test workflow
-    path = cmd._get_output_path(project, GenerationType.WORKFLOW, "MyWorkflow", Language.TYPESCRIPT)
+    path = cmd._get_output_path(
+        project, GenerationType.WORKFLOW, "MyWorkflow", Language.TYPESCRIPT
+    )
     assert path == project.get_subdir("workflows") / "my_workflow.ts"
 
 
@@ -191,7 +199,8 @@ def test_generate_exception_handling(tmp_path):
 
     # Mock _generate to return 1 (simulating exception handling)
     import unittest.mock
-    with unittest.mock.patch.object(cmd, '_generate', return_value=1):
+
+    with unittest.mock.patch.object(cmd, "_generate", return_value=1):
         result = cmd.execute(["agent", "TestAgent"])
         assert result == 1
 
@@ -203,7 +212,8 @@ def test_generate_exception_handling_verbose(tmp_path, capsys):
 
     # Mock _generate to return 1 (simulating exception handling)
     import unittest.mock
-    with unittest.mock.patch.object(cmd, '_generate', return_value=1):
+
+    with unittest.mock.patch.object(cmd, "_generate", return_value=1):
         result = cmd.execute(["agent", "TestAgent"])
         assert result == 1
         # For verbose test, we can't easily test the traceback output since it's mocked

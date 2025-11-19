@@ -18,7 +18,7 @@ def test_cli_startup_time():
         [sys.executable, "-m", "restack_gen", "--help"],
         capture_output=True,
         text=True,
-        cwd=Path(__file__).parent.parent.parent
+        cwd=Path(__file__).parent.parent.parent,
     )
 
     end_time = time.time()
@@ -54,6 +54,8 @@ def test_import_time():
         import_time = end_time - start_time
 
         # Assert import time is reasonable (less than 0.5 seconds per module)
-        assert import_time < 0.5, f"Import time for {module} too slow: {import_time:.2f}s"
+        assert (
+            import_time < 0.5
+        ), f"Import time for {module} too slow: {import_time:.2f}s"
 
         print(f"Import time for {module}: {import_time:.2f}s")

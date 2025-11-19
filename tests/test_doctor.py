@@ -1,5 +1,27 @@
+import sys
+
 from restack_gen.commands.doctor import DoctorCommand
 from restack_gen.constants import Config
+
+
+def test_python_version_check_warns(monkeypatch, capsys):
+    # simulate older Python version
+    monkeypatch.setattr(sys, "version_info", (3, 9, 0))
+    cmd = DoctorCommand(Config())
+    cmd._check_python()
+    captured = capsys.readouterr()
+    assert "Python version outside supported range" in captured.out
+
+
+def test_uv_missing_warns(monkeypatch, capsys):
+    # Simulate uv not installed
+    import shutil
+
+    monkeypatch.setattr(shutil, "which", lambda name: None)
+    cmd = DoctorCommand(Config())
+    cmd._check_uv()
+    captured = capsys.readouterr()
+    assert "uv not found" in captured.out
 
 
 # --- DoctorCommand Coverage ---
