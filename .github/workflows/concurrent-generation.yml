@@ -20,10 +20,13 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: |
-          pip install .
+          python -m pip install --upgrade pip
+          pip install uv
+          if command -v uv >/dev/null 2>&1; then uv venv; else python -m venv .venv; fi
+          uv pip install .
       - name: Concurrently generate projects
         run: |
-          python -m restack_gen --concurrent-new ci_proj1 ci_proj2 ci_proj3 --lang py
+          uv run restack_gen --concurrent-new ci_proj1 ci_proj2 ci_proj3 --lang py
       - name: Validate generated projects
         run: |
           test -d ci_proj1 && test -d ci_proj2 && test -d ci_proj3

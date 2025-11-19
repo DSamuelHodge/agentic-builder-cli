@@ -87,13 +87,13 @@ jobs:
         uv pip install prompt_toolkit
     - name: Run E2E tests
       run: |
-        python -m pytest tests/e2e/ -v
+        uv run pytest tests/e2e/ -v
     - name: Run integration tests
       run: |
-        python -m pytest tests/integration/ -v
+        uv run pytest tests/integration/ -v
     - name: Run performance tests
       run: |
-        python -m pytest tests/performance/ -v
+        uv run pytest tests/performance/ -v
 
   concurrent-generation:
     runs-on: ubuntu-latest
@@ -115,7 +115,7 @@ jobs:
           uv pip install .
       - name: Concurrently generate projects
         run: |
-          python -m restack_gen --concurrent-new ci_proj1 ci_proj2 ci_proj3 --lang py
+          uv run restack_gen --concurrent-new ci_proj1 ci_proj2 ci_proj3 --lang py
       - name: Validate generated projects
         run: |
           test -d ci_proj1 && test -d ci_proj2 && test -d ci_proj3

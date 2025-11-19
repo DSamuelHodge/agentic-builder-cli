@@ -218,13 +218,13 @@ Templates use Jinja2 syntax with predefined context variables:
 
 ```bash
 # Run complete test suite
-python -m pytest
+uv run pytest
 
 # Run with coverage
-python -m pytest --cov=restack_gen --cov-report=html
+uv run pytest --cov=restack_gen --cov-report=html
 
 # Run specific test file
-python -m pytest tests/test_cli.py
+uv run pytest tests/test_cli.py
 ```
 
 ### Code Quality
@@ -349,8 +349,8 @@ python -m twine upload dist/*
 uv pip install pre-commit
 uv run pre-commit install
 ```
-4. Run tests: `python -m pytest`
-5. Ensure code quality: `python -m ruff check . && python -m ruff format .`
+4. Run tests: `uv run pytest`
+5. Ensure code quality: `uv run ruff check . && uv run ruff format .`
 6. Install and run pre-commit hooks (recommended):
 	- `uv pip install pre-commit`
 	- `uv run pre-commit install`
@@ -359,7 +359,7 @@ uv run pre-commit install
 
 ### Code Standards
 
-- **Python Version**: 3.8+ compatibility
+- **Python Version**: 3.10+ compatibility
 - **Code Style**: Black formatting with 88-character line length
 - **Linting**: Ruff for fast, comprehensive code quality
 - **Testing**: pytest with minimum 90% coverage requirement
