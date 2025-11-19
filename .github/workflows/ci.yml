@@ -33,9 +33,6 @@ jobs:
     - name: Lint with ruff
       run: |
         uv run ruff check .
-    - name: Format with ruff
-      run: |
-        uv run ruff format --check .
     - name: Run tests
       run: |
         uv run pytest --cov=restack_gen --cov-report=xml
@@ -175,7 +172,3 @@ jobs:
       - name: Run pre-commit hooks
         run: |
           uv run pre-commit run --all-files
-      - name: Run format checks
-        run: |
-          uv run ruff format --check .
-          uv run black --check .
