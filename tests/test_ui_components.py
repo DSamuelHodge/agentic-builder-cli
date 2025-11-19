@@ -25,7 +25,7 @@ def test_with_progress_bar_decorator(capsys):
         task = progress.add_task(description, total=n)
         for i in range(n):
             time.sleep(0.05)
-            progress.update(task, advance=1, description=f"[cyan]Step {i+1}")
+            progress.update(task, advance=1, description=f"[cyan]Step {i + 1}")
         console.print("[bold blue]Progress complete![/bold blue]")
         return n
 
